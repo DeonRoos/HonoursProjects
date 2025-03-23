@@ -1,0 +1,29 @@
+---
+title: "Including covariates in occupancy models"
+author: "Deon Roos"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    highlight: monochrome
+    code_folding: hide
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    collapsed: false
+    smooth_scroll: false
+    df_round1_print: paged
+---
+
+In the previous document we went through a simple example to get a sense of how occupancy models work. We're now going to begin the process of slowly increasing the complexity. To start, we're going to need to include covariates (often called explanatory variables or independent variables or a wide variety of other names - it's a mess).
+
+Let's revisit our simple occupancy model:
+
+$$
+z_i \sim Bernoulli(\psi_i)\\
+logit(\psi_i) = \beta_0\\
+y_{i,j} \sim Bernoulli(p_{i,j} \times z_i)\\
+logit(p_{i,j}) = \alpha_0
+$$
+
+where the first two formula represent the state model (i.e. are our species present or absent from site $i$), and the last two form

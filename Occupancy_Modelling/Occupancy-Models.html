@@ -11,7 +11,7 @@
 
 <meta name="author" content="Deon Roos" />
 
-<meta name="date" content="2025-03-18" />
+<meta name="date" content="2025-03-20" />
 
 <title>Occupancy models</title>
 
@@ -1394,7 +1394,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -1405,7 +1405,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -1650,7 +1650,7 @@ border-radius: 0px;
 
 <h1 class="title toc-ignore">Occupancy models</h1>
 <h4 class="author">Deon Roos</h4>
-<h4 class="date">2025-03-18</h4>
+<h4 class="date">2025-03-20</h4>
 
 </div>
 
@@ -1943,41 +1943,239 @@ of how you data should be organised. To do so, I’ll use the
 <code>spOccupancy</code> (short for spatial occupancy - we’ll get to the
 spatial part later).</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">library</span>(spOccupancy)</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1988</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simOcc</span>(<span class="at">J.x =</span> <span class="dv">5</span>, <span class="at">J.y =</span> <span class="dv">2</span>, <span class="at">n.rep =</span> <span class="fu">rep</span>(<span class="dv">3</span>, <span class="at">times =</span> <span class="dv">10</span>), <span class="at">beta =</span> <span class="fu">c</span>(<span class="dv">4</span>), <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simOcc</span>(<span class="at">J.x =</span> <span class="dv">5</span>, <span class="at">J.y =</span> <span class="dv">2</span>, <span class="at">n.rep =</span> <span class="fu">rep</span>(<span class="dv">3</span>, <span class="at">times =</span> <span class="dv">10</span>), <span class="at">beta =</span> <span class="fu">c</span>(<span class="dv">1</span>), <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>))</span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>obs <span class="ot">&lt;-</span> dat<span class="sc">$</span>y</span></code></pre></div>
-<p>Our dataset is going to look a little different. Keep in mind that
-with the robust design, we need to monitor each site multiple times,
-often three or more. That means we can’t just have a single column for
-detections like we did in the <code>etosha</code> example above.
-Instead, here would data will look like:</p>
+<p>Our dataset will look slightly different. Since the robust design
+requires monitoring each site multiple times (typically three or more),
+we cannot use a single column for detections as we did in the
+<code>etosha</code> example. Instead, here would data will look
+like:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>obs</span></code></pre></div>
 <pre><code>##       [,1] [,2] [,3]
-##  [1,]    0    0    0
-##  [2,]    1    0    1
-##  [3,]    0    1    1
-##  [4,]    1    1    1
+##  [1,]    0    1    0
+##  [2,]    0    0    1
+##  [3,]    0    0    0
+##  [4,]    0    0    0
 ##  [5,]    0    1    1
-##  [6,]    1    0    0
-##  [7,]    1    1    1
-##  [8,]    0    1    0
-##  [9,]    0    0    0
-## [10,]    1    1    1</code></pre>
+##  [6,]    1    1    0
+##  [7,]    1    0    1
+##  [8,]    0    0    0
+##  [9,]    0    1    0
+## [10,]    0    1    1</code></pre>
 <p>Each row is one of our ten sites, and each column is one of our three
-sampling periods. Notice anything? In site 1, or <code>[1,]</code>, we
-never see elephants. But this could be because we didn’t see them rather
-than them not being there. Same problem as before.</p>
-<p>However, this time in site 2, or <code>[2,]</code>, we see elephants
-on day 1, we don’t see them on day 2, then we see them again on day 3.
-Are elephants present at this site? Yes, clearly. We see them on 2 out
-of 3 surveys, so they’re there.</p>
-<p>This is where we start getting information that helps us understand
-what our detection probability is. Ignore occupancy models for a moment.
-If we focus on site 2, we might guess that our detection probability is
-maybe about 66% (2 out of 3). If so, then we’d think we have a 66%
-chance of detecting elephants on any survey if they’re present. That
-guess helps us figure out how likely it is that elephants were actually
-absent</p>
+sampling periods. Notice anything? In site 3, or <code>[3,]</code>, and
+sites 4 and 8, we never see elephants. Without any further information,
+we don’t know if this is because elephants weren’t in those sites, or
+they were present but we didn’t see. Same problem as before.</p>
+<p>However, we clearly have sites where elephants are present. In sites
+1, 2, 5, 6, 7, 9, and 10, we see elephants at least once, so we know for
+sure that they are present there. But! We can also use these detections
+to help us figure out what’s likely going on in those sites where we
+never saw elephants.</p>
+<p>To see how that works, let’s focus on just site 5, or
+<code>[5,]</code>. Over the three days that we surveyed, we didn’t see
+any elephants on day 1, we then saw them on day 2, then again on day 3.
+Are elephants present at this site? Yes, clearly. We see them at least
+once but there’s additional information we learn from having used a
+robust design (surveying the same site multiple times).</p>
+<p>Ignore occupancy models for a moment. For the detection history of
+site 5 (not detected, detected, detected, or <code>011</code>), we might
+guess that our detection probability is about 66% given we have two
+detections out of three surveys. If so, then we can think of this as
+being the equivalent to us having a 66% chance of detecting elephants on
+any survey (importantly, if they’re present).</p>
+<p>Armed with this 66%, we can figure out how likely it is that
+elephants were actually absent from site 3 and 4. Let’s assume elephants
+were present at site 3. What’s the probability that we would
+<em><strong>fail</strong></em> to detect them? Well, if there’s a 66%
+chance to detect elephants, then failure to detect is <span class="math inline">\(100\% -66\% = 34\%\)</span> (or <span class="math inline">\(1-0.66=0.34\)</span>). So a 34% chance not to
+detect an elephant even if it’s there. What about two days in a row?
+<span class="math inline">\(0.34 \times 0.34 = 0.12\)</span>, or <span class="math inline">\(0.34^2 = 0.12\)</span>, - about 12% chance to not
+detect an elephant two days in a row if it was there. Three days? <span class="math inline">\(0.34^3 = 0.04\)</span>, or 4% chance that, if
+there was an elephant in site 5 that we’d fail to detect it, three days
+in a row.</p>
+<p>Given a measly 4% chance to completely miss elephants on all three
+days, it seems more likely that we didn’t fail to detect, but that there
+was no elephant there. Since this is a simulation, we can verify our
+estimate by checking the true occupancy status of site 3.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>dat<span class="sc">$</span>z[<span class="dv">3</span>]</span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<p>We see that elephants were actually not present in site 5 (above
+should read <code>[1] 0</code> which is absent). Our guess was correct -
+it was more likely that they weren’t there and we <em><strong>literally
+could not</strong></em> see them, rather than they were there and we
+just got very unlucky.</p>
+<p>That’s kind of how occupancy models work, except that rather than
+using a single site to estimate detection probability, we use all data.
+Here’s how we do the analysis more formally.</p>
+</div>
+<div id="data-preparation" class="section level1">
+<h1>Data preparation</h1>
+<p>Before getting to running a fancy * <em>Bayesian</em> * model, we
+need to get our dataset organised in a way that works for
+<code>spOccupancy</code>. Contrary to linear models and GLMs, we don’t
+provide a simple <code>data.frame</code> object. Instead, we provide a
+<code>list</code>, which itself can, and eventually will, contain
+<em>multiple</em> data sets.</p>
+<p>For the starting model we’ll fit below, we only need our detection
+history “matrix” to be added to this list (which I’ll call
+<code>etosha</code>). That detection history matrix is the data we saw
+above (shown again below). So for now, we’re basically taking our data
+set and adding it to a list. A bit of a pain, given it’s a seemingly
+unnecessary step, but it’s needed for the more complex versions of the
+model.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>dat<span class="sc">$</span>y</span></code></pre></div>
+<pre><code>##       [,1] [,2] [,3]
+##  [1,]    0    1    0
+##  [2,]    0    0    1
+##  [3,]    0    0    0
+##  [4,]    0    0    0
+##  [5,]    0    1    1
+##  [6,]    1    1    0
+##  [7,]    1    0    1
+##  [8,]    0    0    0
+##  [9,]    0    1    0
+## [10,]    0    1    1</code></pre>
+<p>The code to create the <code>etosha</code> list is actually
+relatively straightforward. The function <code>list()</code> will create
+the list, and we can just add our detection history (currently stored as
+<code>dat$y</code>) and have it be called <code>y</code> (for the reason
+that we call it <span class="math inline">\(y\)</span> in our equations
+above). If you want to see the code, press the <code>Show</code> button
+to the right.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>etosha <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">y =</span> dat<span class="sc">$</span>y</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="fitting-the-model" class="section level1">
+<h1>Fitting the model</h1>
+<p>Below we’re going to fit the simplest version of an occupancy model
+that we can, specifically:</p>
+<p><span class="math display">\[
+z_i \sim Bernoulli(\psi_i)\\
+logit(\psi_i) = \beta_0\\
+y_{i,j} \sim Bernoulli(p_{i,j} \times z_i)\\
+logit(p_{i,j}) = \alpha_0
+\]</span></p>
+<p>This version of the model only has two average probabilities. One for
+the probability that elephants occupy a site (<span class="math inline">\(\beta_0\)</span> which is fit on the <span class="math inline">\(logit\)</span> link function), and another to
+detect elephants if they are present (<span class="math inline">\(\alpha_0\)</span>, also fit on the <span class="math inline">\(logit\)</span> link function).</p>
+<p>The model is not fit using the so-called “frequentist framework”.
+Instead, it uses the Bayesian framework. I’ll gloss over what these are
+and what the differences are, other than to say that maybe 95% (for all
+the NHST lovers) of science uses the frequentist framework. Not by
+coincidence, it’s also the framework that is generally taught to
+students (hence why most people use it).</p>
+<p>The code below uses the <code>PGOcc()</code> function to fit a simple
+single species, single season occupancy model with no explanatory
+variables. Click the <code>Show</code> button to see the code.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">PGOcc</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="co"># The state model (i.e. what % that elephants are present?)</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="co"># ~ 1 means we want an intercept only model (no covariates)</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="at">occ.formula =</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  <span class="co"># The observation model (i.e. what % that we see elephants if present?)</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="co"># ~ 1 means the same as above - intercept only</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  <span class="at">det.formula =</span> <span class="sc">~</span><span class="dv">1</span>, </span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>  <span class="co"># Our carefully formatted dataset</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  <span class="at">data =</span> etosha, </span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  </span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>  <span class="co"># Details to get the machinery to run that we&#39;ll ignore for now</span></span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  <span class="at">n.chains =</span> <span class="dv">4</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>  <span class="at">n.samples =</span> <span class="dv">2000</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>  <span class="at">n.burn =</span> <span class="dv">200</span>,</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>Having fit the model, we can inspect the parameter estimates:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## PGOcc(occ.formula = ~1, det.formula = ~1, data = etosha, n.samples = 2000, 
+##     verbose = FALSE, n.burn = 200, n.chains = 4)
+## 
+## Samples per Chain: 2000
+## Burn-in: 200
+## Thinning Rate: 1
+## Number of Chains: 4
+## Total Posterior Samples: 7200
+## Run Time (min): 0.0023
+## 
+## Occurrence (logit scale): 
+##               Mean     SD    2.5%    50%  97.5%   Rhat  ESS
+## (Intercept) 1.4601 0.9914 -0.1904 1.3426 3.7274 1.0065 1576
+## 
+## Detection (logit scale): 
+##                Mean     SD    2.5%     50%  97.5%   Rhat  ESS
+## (Intercept) -0.1952 0.4643 -1.0869 -0.2025 0.7266 1.0039 3274</code></pre>
+<p>There’s a lot of information in this summary but we only really care
+about a few things.</p>
+<p><code>Occurrence (logit scale)</code></p>
+<ul>
+<li><p>This is the state model (i.e. what’s the probability that an
+elephant is present in any site?)</p></li>
+<li><p>The <code>(Intercept)</code> row contains all of the information
+on the… intercept. Because we only have an intercept, we only have an
+intercept row.</p></li>
+<li><p><code>Mean</code> is the mean of the “posterior”. Crudely, this
+is Bayesian terminology for the “parameter” (it’s a bit more complicated
+than that, but we’re leaving the Bayesian stuff for later).</p></li>
+<li><p><code>SD</code> is the standard deviation of the
+posterior.</p></li>
+<li><p><code>2.5%</code> is the lower 95% <strong>credible</strong>
+interval (this is not a confidence interval but you can think of them as
+being the same for now).</p></li>
+<li><p><code>50%</code> is the median of the posterior.</p></li>
+<li><p><code>97.5%</code> is the upper 95% <strong>credible</strong>
+interval.</p></li>
+<li><p><code>Rhat</code> will be entirely new to you. This is a measure
+of whether or not there were any problems in figuring out the posterior.
+If the Rhat value is close to 1, then it suggests that it could not find
+any problems (note this does not mean there are no problems, just that
+it couldn’t find any). If the value goes above, say 1.1, then it
+suggests the model is not “convinced” that it’s found the best posterior
+estimate. In that case, you would need to make some tweaks to the
+model.</p></li>
+<li><p><code>ESS</code> stands for “Effective Sample Size”. This is
+another new Bayesian <em>thing</em> that I’ll gloss over the details of
+but for now, we want this value to be in the multiple hundreds or
+thousands. Having “too low” an ESS suggests problems that may require
+tweaks to the model.</p></li>
+</ul>
+<p>In our case, all looks good. The Rhats are generally very close to 1
+and the ESS are all in the thousands.</p>
+</div>
+<div id="interpreting-the-results" class="section level1">
+<h1>Interpreting the results</h1>
+<p>So what do our results mean? For the state model (that
+<code>spOccupancy</code> calls <code>Occurence</code>), our mean is
+estimated as 1.4601 but we would surely expect this to be a probability,
+right? Keep in mind, we’re fitting fancy Bernoulli GLMs, and with our
+Bernoulli GLMs we’ve used the logit link. So the 1.4601 value is <em>on
+the logit</em> link scale.</p>
+<p>We need to convert this logit value to probabilities ourselves using
+the same <code>plogis()</code> function that we used before:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">plogis</span>(<span class="fl">1.4601</span>)</span></code></pre></div>
+<pre><code>## [1] 0.811548</code></pre>
+<p>So we have a roughly 80% chance to have elephants in any of our
+sites. If you have a look at our actual data set, you’ll see we don’t
+have detections in 80% of the sites. We have detections in 70% of the
+sites. That’s where the detection part of the model is helping us out -
+we don’t have 100% detection probability, so we should find that we have
+more sites occupied than we would expect by default.</p>
+<p>What was our detection probability? The mean of the intercept is
+estimated (as a logit value) at -0.1952. We know how to back transform
+this into probabilities:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.1952</span>)</span></code></pre></div>
+<pre><code>## [1] 0.4513544</code></pre>
+<p>The model has estimated that we have roughly 45% chance of seeing an
+elephant if it’s actually there. If we do have a 45% detection
+probability, then the chance of not seeing an elephant in sites 3, 4 or
+8 is <span class="math inline">\(0.45^3 = 0.09 = 9\%\)</span>. Not huge,
+but not trivial either.</p>
+<p>Most importantly, we learn that detection probability is not 100%.
+That alone is important. The consequence of that is to show, quite
+clearly, why the Bernoulli GLM approach we used at the start is not
+appropriate. Because it ignored imperfect detections, it’s unreliable.
+Our occupancy model is not.</p>
 </div>
 
 
