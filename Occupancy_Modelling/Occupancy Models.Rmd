@@ -99,7 +99,7 @@ This 20% estimate is actually the product of two probabilities. For us to detect
 
 2. I have to *see* the elephant. This will never have a 100% chance no matter how good I am at spotting elephants. We can call this probability $p$.
 
-So all of the `1`'s in our `etosha` dataset are the result of both of these probabilities, or $\psi \times p$, and not just $\psi$ like we want.
+So all of the `1`'s in our `etosha` dataset are the result of succeeding in both of these probabilities. However, all of the `0`s are the result of failing either probability; either there were no elephants ($1-\psi$), or there were you just didn't see them ($\psi \times 1-p$). Fundamentally, the problem is that `elephants` represents $\psi \times p$, and not just $\psi$ like we want.
 
 There's no shortage of reasons why you might not see an elephant despite it being there. It can be as simple and dumb as the elephant was behind a bush when I checked that site. This reflects something called "imperfect detection", i.e. just cause it's there doesn't mean we're going to see it.
 
@@ -107,9 +107,7 @@ Imperfect detection is not an issue for the `1`'s in our data - when we see an e
 
 That's the problem! The `0`'s have multiple meanings. It's not as simple as "if I don't see an elephant, there are not elephants there".
 
-> [Bit of a rant here] This is a massive problem in a particular subset of biology where people use "Species Distribution Models" (or SDMs) to understand where species are (i.e. their ranges) and why they are there. To avoid confusion, the term SDM means basically nothing statistically as there is no such thing as a "Species Distribution Model" (i.e. it's not like GLM that means something very specific). SDMs really describe an output, and not a statistical model. In fact, some SDMs are simply GLMs, like the one above, which ignores imperfect detection. If someone tells me they fit SDMs, I generally treat it as a red flag; there's a good chance they don't understand stats well enough to do the research they want to responsibly.
-
-Generally, when people say they ran an SDM, what they *mean* is, they ran something akin to the GLM above. Specifically, they would treat the `elephants` column in our `etosha` dataset as being a faithful measure of elephants being either present or absent, and not elephants are present __*and detected*__ or just absent.
+Generally, when people say they ran an SDM (a "Species Distribution Model"), what they *mean* is, they ran something akin to the GLM above. Specifically, they would treat the `elephants` column in our `etosha` dataset as being a faithful measure of elephants being either present or absent, and not elephants are present __*and detected*__ or just absent.
 
 They ignore imperfect detection; they ignore the fact that `0`'s have multiple meanings.
 
