@@ -1,0 +1,203 @@
+---
+title: "Structural Topic Models"
+author: "Deon Roos"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly
+    highlight: monochrome
+    code_folding: hide
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    collapsed: false
+    smooth_scroll: false
+    df_round1_print: paged
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Structural Topic Models (STM): A Guided Walkthrough
+
+From theory to implementation, using `poliblogs2008.csv`
+
+---
+
+## What is a Structural Topic Model?
+
+A **Structural Topic Model (STM)** is a way to explore large sets of text documents and identify common themes — called **topics**.
+
+STM is a **hierarchical model** — it assumes that:
+
+1. Each document is a **mixture of topics** (like an occupancy model where a site can be partially occupied by different species).
+2. Each word in a document is drawn from one of those topics (via a **categorical distribution**).
+3. Each topic has a characteristic distribution over words (modeled as a **multinomial**).
+4. The mixture of topics in a document is modeled using a **logistic normal distribution** — similar to using a logit link in a GLM.
+
+STM allows **document-level metadata** (covariates) to influence topic proportions, making it a powerful tool for understanding how themes vary by author, date, or other contextual information.
+
+---
+
+## Load Packages and Data
+
+Before we begin modeling or processing text, we need to load the necessary R packages and import our dataset. The `stm` package provides our core modeling functions, while `tm` helps with text preprocessing.
+
+```{r load-packages}
+library(stm)
+library(tm)
+library(ggplot2)
+
+# Load the data
+data <- read.csv("C:\\HonoursProjects\\Structural_Topic_Modelling\\poliblogs2008.csv", stringsAsFactors = FALSE)
+head(data)
+```
+
+---
+
+## Preprocess Text
+
+Before we jump into the modeling, we need to clean and structure the text data. Why? Because raw text is noisy. For example, in the sentence "Hi everyone! I eat pancakes.", the spaces and punctuation aren't useful for analysis. Also, very rare words or common function words (like "the" or "is") can introduce more noise than signal.
+
+To handle this, we use two important functions:
+- `textProcessor()` cleans and tokenizes the text: removing punctuation, lowercasing, stemming, and removing stopwords.
+- `prepDocuments()` aligns the processed text with metadata and filters out low-frequency words/documents.
+
+```{r preprocess-text}
+processed <- textProcessor(data$documents, metadata = data)
+out <- prepDocuments(processed$documents, processed$vocab, processed$meta)
+
+# Extract components
+docs <- out$documents
+vocab <- out$vocab
+meta <- out$meta
+```
+
+To decide how aggressively we want to filter rare words, it's useful to visualise the effect of different frequency thresholds. Words that appear in very few documents may be misspellings or not useful for identifying shared themes, and removing them helps improve model stability.
+
+```{r plot-removed}
+plotRemoved(processed$documents, lower.thresh = seq(1, 200, by = 100))
+```
+
+---
+
+## Choosing K (Number of Topics)
+
+STM requires you to choose how many topics you want it to find. This is a bit like deciding how many clusters you want in a clustering analysis.
+
+There’s no perfect answer, but you can:
+- Try multiple values and compare
+- Consider interpretability (too many = hard to summarise; too few = too broad)
+- Use `searchK()` to assess model diagnostics
+
+```{r choose-k}
+# Optional model selection (can take time)
+# searchK(docs, vocab, K = c(10, 15, 20, 25), data = meta)
+```
+
+For demonstration, we'll proceed with `K = 20`.
+
+---
+
+## Fit STM – Model 1 (No Covariates)
+
+In this first model, we are treating the text as the only source of information — we do not include metadata (e.g., date, political leaning) in the model. This is called an "unsupervised" STM. It identifies themes that commonly appear across the documents, based solely on word usage patterns.
+
+```{r model1, message=FALSE}
+model1 <- stm(documents = docs,
+              vocab = vocab,
+              K = 20,
+              data = meta,
+              init.type = "Spectral")
+```
+
+### Explore Model 1
+
+Now that we’ve fitted our model, let’s examine what it found.
+- The first plot shows the overall prevalence of each topic.
+- `labelTopics()` gives us the top words for each topic.
+- `findThoughts()` pulls example documents that strongly represent a topic.
+
+```{r model1-explore}
+plot(model1, type = "summary")
+labelTopics(model1)
+findThoughts(model1, texts = meta$documents, n = 2, topics = 3)
+```
+
+---
+
+## Fit STM – Model 2 (With Covariates)
+
+Now we add document-level metadata (covariates) into the model — in this case, the political leaning of the blog (`rating`) and the date it was posted (`day`).
+
+Including covariates allows us to examine how topic usage varies by these variables — for example, whether some topics are more prevalent in Conservative vs Liberal posts, or how they change over time.
+
+We also introduce a smoothing function using `s(day, df = 5)`. This tells the model to fit a smooth (non-linear) function to the effect of date, using a spline with 5 degrees of freedom. The idea is to model gradual changes in topic usage over time, without assuming a strict linear trend.
+
+```{r model2, message=FALSE}
+model2 <- stm(documents = docs,
+              vocab = vocab,
+              K = 20,
+              prevalence = ~ rating + s(day, df = 5),
+              data = meta,
+              init.type = "Spectral")
+```
+
+### Explore Model 2
+
+Let’s inspect the results of our covariate-aware model.
+
+```{r model2-explore}
+plot(model2, type = "summary")
+labelTopics(model2, topics = c(3, 7, 20))
+findThoughts(model2, texts = meta$documents, n = 2, topics = 3)$docs[[1]]
+```
+
+---
+
+## Estimate and Plot Covariate Effects
+
+To understand how covariates influence topic prevalence, we use `estimateEffect()`. This estimates regression-like relationships between the covariates and topic proportions.
+
+```{r estimate-effect}
+effect_model <- estimateEffect(1:20 ~ rating + s(day), model2,
+                               meta = meta, uncertainty = "Global")
+summary(effect_model, topics = 3)
+```
+
+### Plot Topic 7 Over Time
+
+Now we plot how a topic’s prevalence changes over the year 2008.
+
+```{r plot-time}
+plot(effect_model, "day", method = "continuous", topics = 7,
+     printlegend = FALSE, xlab = "Time (2008)", xaxt = "n")
+
+monthseq <- seq(from = as.Date("2008-01-01"), to = as.Date("2008-12-01"), by = "month")
+monthnames <- months(monthseq)
+axis(1, at = as.numeric(monthseq) - min(as.numeric(monthseq)), labels = monthnames)
+```
+
+### Compare Topic 3 by Political Leaning
+
+This shows how topic usage differs between Liberal and Conservative blog posts.
+
+```{r plot-rating-diff}
+plot(effect_model, covariate = "rating", topics = 3, method = "difference",
+     cov.value1 = "Liberal", cov.value2 = "Conservative",
+     xlab = "More Liberal ... More Conservative",
+     main = "Topic 3: Difference by Political Rating")
+```
+
+---
+
+## Summary
+
+- **STM** helps uncover underlying topics in a collection of documents.
+- Document-level **metadata** (covariates) can be used to model how topic proportions vary.
+- The **logistic normal** plays a similar role to a logit link in GLMs.
+- STM is hierarchical: topic use varies across documents; topics generate words.
+
+This workflow can be applied to any corpus of documents with associated metadata.

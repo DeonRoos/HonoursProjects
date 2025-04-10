@@ -128,7 +128,6 @@ fit <- PGOcc(
   # ~ 1 means we want an intercept only model (no covariates)
   occ.formula = ~ 1, 
   # The observation model (i.e. what % that we see elephants if present?)
-  # ~ 1 means the same as above - intercept only
   det.formula = ~ rain, 
   # Our carefully formatted dataset
   data = etosha, 
@@ -453,3 +452,5 @@ X.0 <- cbind(
 #predict(fit, X.0)
 ```
 
+=======
+>>>>>>> d2a8e3a44055a5e908f7e77ffad29b41db47483c
