@@ -2,12 +2,19 @@
 title: "Bayesian Occupancy Models"
 author: "Deon Roos"
 date: "`r Sys.Date()`"
-output: html_document
+format:
+  html:
+    theme: flatly
+    highlight-style: monochrome
+    code-fold: true
+    toc: true
+    toc-depth: 2
+    toc-location: right
 ---
 
 # Statistical frameworks
 
-Most of the statistics you've probably learned so far has been based on what's called "frequentist" statistics. The analysis you'll be using for occupancy models (at least this particular implementation) will be using something called "Bayesian" statistics (pronounced "Bay-zi-an"). These are the two main frameworks currently used to learn something from data (unless you want to start splitting philosophical hairs). Within this document we'll go through what the differences are and how to move from frequentist to Bayesian stats, with a particular focus on Occupancy Models.
+Most of the statistics you've probably learned so far has been based on what's called "frequentist" statistics. The analysis you'll be using for occupancy models (at least this particular implementation) will be using something called "Bayesian" statistics (pronounced "Bay-zee-'n"). These are the two main frameworks currently used to learn something from data (unless you want to start splitting philosophical hairs). Within this document we'll go through what the differences are and how to move from frequentist to Bayesian stats, with a particular focus on Occupancy Models.
 
 # What is frequentist statistics?
 

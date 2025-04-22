@@ -1,19 +1,17 @@
 ---
-title: "Occupancy models"
+title: "Occupancy Models"
 author: "Deon Roos"
 date: "`r Sys.Date()`"
-output: 
-  html_document:
+format:
+  html:
     theme: flatly
-    highlight: monochrome
-    code_folding: hide
+    highlight-style: monochrome
+    code-fold: true
     toc: true
-    toc_depth: 2
-    toc_float: true
-    collapsed: false
-    smooth_scroll: false
-    df_round1_print: paged
+    toc-depth: 2
+    toc-location: right
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
@@ -48,6 +46,9 @@ The model would be:
 
 $$
 y_i \sim Bernoulli(p_i) \\
+$$
+
+$$
 logit(p_i) = \beta_0
 $$
 

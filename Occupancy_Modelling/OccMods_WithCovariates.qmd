@@ -2,17 +2,14 @@
 title: "Including covariates in occupancy models"
 author: "Deon Roos"
 date: "`r Sys.Date()`"
-output: 
-  html_document:
+format:
+  html:
     theme: flatly
-    highlight: monochrome
-    code_folding: hide
+    highlight-style: monochrome
+    code-fold: true
     toc: true
-    toc_depth: 2
-    toc_float: true
-    collapsed: false
-    smooth_scroll: false
-    df_round1_print: paged
+    toc-depth: 2
+    toc-location: right
 ---
 
 # The `R` packages
@@ -33,8 +30,17 @@ Let's revisit our simple occupancy model:
 
 $$
 z_i \sim Bernoulli(\psi_i)\\
+$$
+
+$$
 logit(\psi_i) = \beta_0\\
+$$
+
+$$
 y_{i,j} \sim Bernoulli(p_{i,j} \times z_i)\\
+$$
+
+$$
 logit(p_{i,j}) = \alpha_0
 $$
 
@@ -150,9 +156,18 @@ summary(fit)
 Compared to the model in the previous document we now have additional information for `Detection (logit scale)`; we have both an `(Intercept)` and `rain`. These are $\alpha_0$ and $\alpha_1$ from our detection model $logit(p_i) = \alpha_0 + \alpha_1 \times Rain_i$. If we really wanted to, we could now replace the parameter labels (e.g. the $\alpha$s and $\beta$s) with their now estimated values which would look like (rounding the estimates to two decimal points arbitrarily):
 
 $$
-z_i \sim Bernoulli(\psi_i)\\
+z_i \sim Bernoulli(\psi_i)\\$$
+$$
+
+$$
 logit(\psi_i) = 1.88\\
+$$
+
+$$
 y_{i,j} \sim Bernoulli(p_{i,j} \times z_i)\\
+$$
+
+$$
 logit(p_{i,j}) = -1.89 + 0.69 \times Rain_i
 $$
 
