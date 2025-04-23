@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Deon Roos">
-<meta name="dcterms.date" content="2025-04-22">
+<meta name="dcterms.date" content="2025-04-23">
 
-<title>Into to Occupancy Modelling - Bayesian Occupancy Models</title>
+<title>Intro to Occupancy Modelling - Bayesian Models</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Into to Occupancy Modelling</span>
+    <span class="navbar-title">Intro to Occupancy Modelling</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -119,15 +119,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./Occupancy_Models.html" rel="" target="">
- <span class="menu-text">Intro to Occupancy</span></a>
+ <span class="menu-text">Intro to Occupancy Models</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./OccMods_WithCovariates.html" rel="" target="">
- <span class="menu-text">Covariates</span></a>
+ <span class="menu-text">Occupancy Models with Covariates</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./Bayesian_Occupancy_Models.html" rel="" target="" aria-current="page">
- <span class="menu-text">Bayesian &amp; Spatial</span></a>
+ <span class="menu-text">Bayesian models</span></a>
   </li>  
 </ul>
             <div class="quarto-navbar-tools ms-auto">
@@ -147,7 +147,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#statistical-frameworks" id="toc-statistical-frameworks" class="nav-link active" data-scroll-target="#statistical-frameworks">Statistical frameworks</a></li>
   <li><a href="#what-is-frequentist-statistics" id="toc-what-is-frequentist-statistics" class="nav-link" data-scroll-target="#what-is-frequentist-statistics">What is frequentist statistics?</a></li>
-  <li><a href="#technical-differences" id="toc-technical-differences" class="nav-link" data-scroll-target="#technical-differences">Technical differences</a></li>
+  <li><a href="#bayes-theorem" id="toc-bayes-theorem" class="nav-link" data-scroll-target="#bayes-theorem">Bayes Theorem</a></li>
+  <li><a href="#visualising-bayes" id="toc-visualising-bayes" class="nav-link" data-scroll-target="#visualising-bayes">Visualising Bayes</a>
+  <ul class="collapse">
+  <li><a href="#your-prior-belief-before-seeing-the-data" id="toc-your-prior-belief-before-seeing-the-data" class="nav-link" data-scroll-target="#your-prior-belief-before-seeing-the-data">Your Prior Belief (before seeing the data)</a></li>
+  <li><a href="#the-data-100-students-passed" id="toc-the-data-100-students-passed" class="nav-link" data-scroll-target="#the-data-100-students-passed">The Data (100 students passed)</a></li>
+  <li><a href="#the-posterior-updated-belief" id="toc-the-posterior-updated-belief" class="nav-link" data-scroll-target="#the-posterior-updated-belief">The Posterior (updated belief)</a></li>
+  </ul></li>
+  <li><a href="#bayesian-models" id="toc-bayesian-models" class="nav-link" data-scroll-target="#bayesian-models">Bayesian models</a></li>
   </ul>
 </nav>
     </div>
@@ -156,7 +163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Bayesian Occupancy Models</h1>
+<h1 class="title">Bayesian Models</h1>
 </div>
 
 
@@ -173,7 +180,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 22, 2025</p>
+      <p class="date">April 23, 2025</p>
     </div>
   </div>
   
@@ -185,45 +192,239 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="statistical-frameworks" class="level1">
 <h1>Statistical frameworks</h1>
-<p>Most of the statistics you’ve probably learned so far has been based on what’s called “frequentist” statistics. The analysis you’ll be using for occupancy models (at least this particular implementation) will be using something called “Bayesian” statistics (pronounced “Bay-zee-’n”). These are the two main frameworks currently used to learn something from data (unless you want to start splitting philosophical hairs). Within this document we’ll go through what the differences are and how to move from frequentist to Bayesian stats, with a particular focus on Occupancy Models.</p>
+<p>Most of the statistics you’ve probably learned so far has been based in what’s called “frequentist” statistics. The analysis you’ll be using for occupancy models (at least this particular implementation) will be using something called “Bayesian” statistics (pronounced “Bay-zee-’n”). These are the two main frameworks currently used to learn something from data (unless you want to start splitting philosophical hairs). Within this document we’re going to start with what Bayesian statistics is, how to move from frequentist to Bayesian statistics, and how a Bayesian model works. We’ll leave occupancy models to the side for the time being.</p>
 </section>
 <section id="what-is-frequentist-statistics" class="level1">
 <h1>What is frequentist statistics?</h1>
 <p>Almost every scientist understands statistics under the frequentist framework. That’s not because it’s philosophically better or has a cleaner underlying logic. It’s because that’s what they were taught. As simple as that. This has led to frequentist methods becoming the default; not because they’re necessarily better, but simply because that’s how people were taught.</p>
 <p>Frequentist statistics is based on the idea that there’s one fixed, true value (like the average height of all people) that we’re trying to estimate. We can’t see that true value directly, but we can estimate it by using stats to analyse data we’ve collected. The more data we have, especially if we had an infinite amount, the better our estimate would be (i.e.&nbsp;the closer we’ll get to the elusive “Truth”). Frequentist methods revolve around the idea of something called long-run frequencies: if we repeated an experiment over and over, how often would we get a result as “extreme” as the one we observed? It doesn’t assign probabilities to hypotheses or parameters, only to the data we might observe under certain assumptions.</p>
-<p>In contrast, Bayesian statistics treats unknown values (like parameters, e.g.&nbsp;the average human height) as something that is inherently uncertain (i.e.&nbsp;we won’t ever be able to get to that “Truth”). Instead it allows us to assign probabilities to such values based on what we already believe (called a prior), then updates those beliefs with data. So where frequentists say, “this result would happen 5% of the time by chance,” Bayesians say, “given the data, there’s an 80% chance this hypothesis is true.”</p>
-<p>Think of it like this: a frequentist sees probability as something that only makes sense when talking about random events we could repeat (so called “long-run frequencies”), like flipping a coin or running an experiment thousands of times. So they’d never say, “there’s a 70% chance the average height is 1.75 m”, because the True average height is a fixed number, even if we don’t know it yet. Instead, they’d say, “if we did this study again and again, 95% of the time our results would fall within this range.” That’s not particularly intuitive and is one of the big criticisms (at least mine) of frequentist statistics (so much of it is not intuitive).</p>
-<p>A Bayesian, on the other hand, is comfortable saying, “given what we knew before and what the data tells us now, there’s a 70% chance the average height is 1.75 m.” They treat unknowns, like the average human height, more like things we can be uncertain about and put probabilities on. It’s like the difference between saying, “How often would this result happen if we kept repeating the study?” versus, “Given everything we know, how confident are we in this being true?” This is one of the big benefits of Bayesian statistics. It’s closer to how normal humans actually think (at least for me).</p>
-<p>For example, if I asked you what you think your chances are of getting a first on your thesis, you might be pessimistic and say something like 50%. That’s your <strong>prior</strong>; your belief about the outcome (here your grade) before seeing any data. Now, what if I told you that I’ve supervised 100 students before, and every single one of them got a first? With that new information, you’d probably update your belief and maybe revise your estimate up to, say, 80%. Still not 100% because of you still believe you only have a 50% chance but you’re also not ignoring that 100% of students have had firsts. That’s the Bayesian approach: start with a prior belief, then update it using data. Conversely, if we were frequentists, we wouldn’t talk about the probability that you will get a first. Instead, we’d ask something like: “If many students like you wrote their theses under similar conditions, how often would they get a first?”.</p>
+<p>In contrast, Bayesian statistics treats unknown values (like parameters, e.g.&nbsp;the average human height) as something that is inherently uncertain (i.e.&nbsp;we won’t ever be able to get to that “Truth”). Instead it allows us to assign probabilities to such values based on what we already believe (called a “prior”), then updates those beliefs with data. So where frequentists say, “this result would happen 5% of the time by chance,” Bayesians say, “given the data, there’s an 80% chance this hypothesis is true.”</p>
+<p>Think of it like this: a frequentist sees probability as something that only makes sense when talking about random events we could repeat (so called “long-run frequencies”), like flipping a coin or running an experiment thousands of times. So they’d never say, “there’s a 70% chance the average height is 1.75 m”, because the True average height is a fixed number, even if we don’t know it. Instead, they’d say, “if we did this study again and again, 95% of the time our results would fall within a range that contains the true value.” That’s not particularly intuitive and is one of the big criticisms (at least mine) of frequentist statistics. So much of frequentist statistics is not intuitive.</p>
+<p>A Bayesian, on the other hand, is comfortable saying, “given what we knew before and what the data tells us now, there’s a 70% chance the average height is 1.75 m.” They treat unknowns, like the average human height, more like things we can be uncertain about and, instead of pretending that they know the absolute truth, they put probabilities on it. It’s like the difference between saying, “How often would this result happen if we kept repeating the study?” versus, “Given everything we know, how confident are we in this being true?” This is one of the big benefits of Bayesian statistics. It’s closer to how normal humans actually think (at least I think more like this).</p>
+<p>For example, if I asked you what you think your chances are of passing your thesis, you might be pessimistic and say something like 50%. That’s your <strong>prior</strong>; your belief about the outcome (here passing your thesis) before seeing any data. Now, what if I told you I’ve supervised 100 students before, and every single one of them passed? That’s strong evidence that the pass rate is high, close to 100%. This is your <strong>data</strong>, and the <strong>likelihood</strong> is how well that data fits different assumptions about the pass rate. With this new information, you’d probably update your belief and maybe revise your estimate up to, say, 80%. It’s still not 100% because you haven’t forgotten your initial uncertainty; you started out thinking there was only a 50% chance, so you’re cautious. But you’re also not ignoring the fact that 100 students passed. Your new revised 80% chance of passing is your <strong>posterior</strong>.</p>
+<p>That’s the Bayesian approach: start with a prior belief, then update it using data to get a posterior. Conversely, if we were frequentists, we wouldn’t talk about the probability that you will get a first. Instead, we’d ask something like: “If many students like you wrote their theses under similar conditions, how often would they pass?”. In that case, a frequentist would ignore your belief and insist you have a 100%.</p>
 </section>
-<section id="technical-differences" class="level1">
-<h1>Technical differences</h1>
-<p>The equation you may well see whenever you look up Bayesian statistics is <strong>Bayes’ Theorem</strong>, which is:</p>
+<section id="bayes-theorem" class="level1">
+<h1>Bayes Theorem</h1>
+<p>The equation you may well see whenever you look up Bayesian statistics is <strong>Bayes’ Theorem</strong>, which is some version of:</p>
 <p><span class="math display">\[
 P(Parameters | Data) = \frac{P(Data | Parameters)\times P(Parameters)}{P(Data)}
 \]</span></p>
 <p>where:</p>
 <ul>
-<li><p><span class="math inline">\(P(Parameters | Data)\)</span> is something called the <strong>posterior</strong>. In the above thesis grade example, this is the 80% probability to get a first (the <span class="math inline">\(Parameter\)</span>), given 100 students all got firsts (the <span class="math inline">\(Data\)</span>).</p></li>
-<li><p><span class="math inline">\(P(Parameters)\)</span> is the <strong>prior</strong> - you’re belief before seeing the data. In the thesis example, this is your belief that you have a 50% chance of getting a first.</p></li>
-<li><p><span class="math inline">\(P(Data | Parameters)\)</span> is the <strong>likelihood</strong>, which is a measure of how likely the data is, given the parameter values.</p></li>
-<li><p><span class="math inline">\(P(Data)\)</span> is the evidence, or data. More technically, it’s the probability of observing the data under any possible parameter value.</p></li>
+<li><p><span class="math inline">\(P(Parameters | Data)\)</span> is the <strong>posterior</strong>. In the above thesis grade example, this is the 80% probability to pass, given you thought you had a 50% chance to pass but also that 100% students all passed. The “parameter” here is your estimated pass rate and the data comes from all the previous students.</p></li>
+<li><p><span class="math inline">\(P(Parameters)\)</span> is the <strong>prior</strong>. You’re belief of what the parameter value is before seeing the data. In the thesis example, this is your belief that you have a 50% chance of passing.</p></li>
+<li><p><span class="math inline">\(P(Data | Parameters)\)</span> is the <strong>likelihood</strong>, which is a measure of how likely the data is, given the parameter values. In the above example, this crudely maps to 100% of students passing.</p></li>
+<li><p><span class="math inline">\(P(Data)\)</span> is the evidence; it’s a “normalizing constant” that ensures everything sums to 1 (or 100%). It tells us how likely we are to observe the data, considering all possible parameter values. More technically, it’s the probability of observing the data under any possible parameter value. Or, in the thesis example, it’s the 100 students.</p></li>
 </ul>
-<p>More plainly, it would translate to:</p>
-<blockquote class="blockquote">
-<p><span class="math inline">\(Posterior = (Likelihood \times Prior) \div Evidence\)</span></p>
-</blockquote>
-<p>Frequentists don’t actually calculate <span class="math inline">\(P(Parameters | Data)\)</span> because they treat the parameters as fixed (not random), i.e.&nbsp;there is one singular True value, not a distribution. So instead, they focus on the likelihood:</p>
-<p><span class="math display">\[
-L(Paramaters | Data) = P(Data | Parameters)
-\]</span> which is <strong>kind of</strong> like saying that the posterior is simply the likelihood (but don’t say that to any statisticians).</p>
+</section>
+<section id="visualising-bayes" class="level1">
+<h1>Visualising Bayes</h1>
+<p>Let’s now add some visual intuition to the thesis pass example using simple figures. Imagine we want to visualise your belief as a curve that shows how likely you think different pass rates are.</p>
+<section id="your-prior-belief-before-seeing-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="your-prior-belief-before-seeing-the-data">Your Prior Belief (before seeing the data)</h2>
+<p>You start off thinking you have a 50% chance of passing. That doesn’t mean you’re certain, it’s just your best guess. You might be unsure, so you’re open to the idea that it could be lower or higher. Your <strong>prior</strong> might look like this:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(fit, "beta")</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(fit, "alpha")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>prior <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">20</span>, <span class="dv">20</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(theta, prior) <span class="sc">|&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> prior)) <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Belief Density"</span>) <span class="sc">+</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
 </div>
+</div>
+</section>
+<section id="the-data-100-students-passed" class="level2">
+<h2 class="anchored" data-anchor-id="the-data-100-students-passed">The Data (100 students passed)</h2>
+<p>Now you find out that 100 students have taken the thesis before you, and all of them passed. That’s really strong evidence that the pass rate is high, probably very near to 100%.</p>
+<p>We can visualise how likely the observed data is for different values of the pass rate, this is the <strong>likelihood</strong>.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> theta<span class="sc">^</span><span class="dv">100</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> likelihood <span class="sc">/</span> <span class="fu">max</span>(likelihood)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(theta, likelihood) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> likelihood)) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Likelihood (scaled)"</span>) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In Bayesian terms, this evidence updates your belief.</p>
+</section>
+<section id="the-posterior-updated-belief" class="level2">
+<h2 class="anchored" data-anchor-id="the-posterior-updated-belief">The Posterior (updated belief)</h2>
+<p>Your updated belief, the <strong>posterior</strong>, combines your initial guess of roughly 50% with the strong evidence we have from 100 students. The resulting curve now shifts to the right — it’s taller near 85%–90% but still not at 100%, because you haven’t thrown out your original uncertainty.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">120</span>, <span class="dv">20</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>posterior_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> <span class="fu">rep</span>(theta, <span class="dv">3</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">density =</span> <span class="fu">c</span>(prior, likelihood, posterior),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">belief =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Prior"</span>, <span class="st">"Likelihood"</span>, <span class="st">"Posterior"</span>), <span class="at">each =</span> <span class="fu">length</span>(theta))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>posterior_df <span class="sc">|&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> density, <span class="at">color =</span> belief)) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Belief / Likelihood (scaled)"</span>, <span class="at">colour =</span> <span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"steelblue"</span>, <span class="st">"darkgreen"</span>, <span class="st">"firebrick"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Importantly, in Bayesian statistics, we don’t have a single value for our parameter estimate (or <strong>posterior</strong>). Instead we have a full <em>distribution</em> of values. This becomes an insanely valuable property that can be exploited in many different ways, which we’ll get back to later on.</p>
+<p>For now, your posterior is more-or-less the multiplication of your prior belief with the likelihood (<span class="math inline">\(P(Data | Parameters)\times P(Parameters)\)</span>). In this case, giving you a happy middle ground of ca. 85% chance to pass.</p>
+<p>This is how Bayesian statistics works in practice:</p>
+<ol type="1">
+<li><p>Start with a belief (or hypothesis).</p></li>
+<li><p>See some evidence (i.e.&nbsp;collect some data).</p></li>
+<li><p>Update your belief accordingly.</p></li>
+</ol>
+<p>In this case, seeing 100 successful students shifts your belief quite a lot, but not all the way to 100%, because your prior belief still matters! You know yourself after all! You’d be silly to just ignore that.</p>
+<p>In short, this is kinda the scientific method, isn’t it? (pls don’t tell any frequentists that I said that…)</p>
+</section>
+</section>
+<section id="bayesian-models" class="level1">
+<h1>Bayesian models</h1>
+<p>The above example is cute and all but how does this translate into an actual model? For instance, what about the model we started off with in the very first document:</p>
+<p><span class="math display">\[
+y_i \sim Bernoulli(p_i) \\
+\]</span></p>
+<p><span class="math display">\[
+logit(p_i) = \beta_0
+\]</span></p>
+<p>How do we make this Bayesian?</p>
+<p>Well, with surprisingly little change. All we need to do is add a <strong>prior</strong> for each parameter in the model. Here, the only parameter we have is <span class="math inline">\(\beta_0\)</span>. The challenge is; how do we <em>define</em> our belief in numbers?</p>
+<p>This is where statistical distributions become insanely useful. Distributions allow us to define a range of values at differing frequencies. For example, in the thesis example, when we specified the range of pass rates we thought might be reasonable:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prior <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">20</span>, <span class="dv">20</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(theta, prior) <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> prior)) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Belief Density"</span>) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This was done using a distribution. Specifically, we used a <span class="math inline">\(Beta\)</span> distribution with the “technical details” set such that it looked like the above, but we can change the distribution and values to anything we want.</p>
+<p>So for our equation:</p>
+<p><span class="math display">\[
+y_i \sim Bernoulli(p_i) \\
+\]</span></p>
+<p><span class="math display">\[
+logit(p_i) = \beta_0
+\]</span></p>
+<p>We just need to specify what we think <span class="math inline">\(\beta_0\)</span> will be using a distribution, which could be whatever we think it could be. If we’re not very confident, then we can make the distribution wider. If we think the minimum or maximum will be 0 or 1, then we can choose a distribution that will stay within those bounds.</p>
+<p>Here are a handful are randomly chosen distributions you could pick from to use as a prior for <em>anything</em>:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>x_beta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>x_normal <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>x_gamma <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>normalize <span class="ot">&lt;-</span> <span class="cf">function</span>(y) y <span class="sc">/</span> <span class="fu">max</span>(y)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>beta_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_beta, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dbeta</span>(x_beta, <span class="dv">2</span>, <span class="dv">5</span>)), <span class="at">Distribution =</span> <span class="st">"Beta"</span>, <span class="at">Variant =</span> <span class="st">"A"</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_beta, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dbeta</span>(x_beta, <span class="dv">2</span>, <span class="dv">2</span>)), <span class="at">Distribution =</span> <span class="st">"Beta"</span>, <span class="at">Variant =</span> <span class="st">"B"</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_beta, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dbeta</span>(x_beta, <span class="dv">5</span>, <span class="dv">2</span>)), <span class="at">Distribution =</span> <span class="st">"Beta"</span>, <span class="at">Variant =</span> <span class="st">"C"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>normal_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_normal, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dnorm</span>(x_normal, <span class="sc">-</span><span class="dv">2</span>, <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Normal"</span>, <span class="at">Variant =</span> <span class="st">"A"</span>),</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_normal, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dnorm</span>(x_normal, <span class="dv">0</span>, <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Normal"</span>, <span class="at">Variant =</span> <span class="st">"B"</span>),</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_normal, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dnorm</span>(x_normal, <span class="dv">2</span>, <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Normal"</span>, <span class="at">Variant =</span> <span class="st">"C"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>gamma_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_gamma, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dgamma</span>(x_gamma, <span class="at">shape =</span> <span class="dv">1</span>, <span class="at">rate =</span> <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Gamma"</span>, <span class="at">Variant =</span> <span class="st">"A"</span>),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_gamma, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dgamma</span>(x_gamma, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">rate =</span> <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Gamma"</span>, <span class="at">Variant =</span> <span class="st">"B"</span>),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_gamma, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dgamma</span>(x_gamma, <span class="at">shape =</span> <span class="dv">5</span>, <span class="at">rate =</span> <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Gamma"</span>, <span class="at">Variant =</span> <span class="st">"C"</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(beta_df, normal_df, gamma_df)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> density)) <span class="sc">+</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(Distribution), <span class="at">rows =</span> <span class="fu">vars</span>(Variant), <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(<span class="st">"Possible values of "</span> <span class="sc">*</span> beta[<span class="dv">0</span>]),</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Going back to our model, let’s say I think the value for <span class="math inline">\(\beta_0\)</span> is likely:</p>
+<ol type="1">
+<li><p>probably less than one</p></li>
+<li><p>can’t go below zero</p></li>
+<li><p>a value close to zero is most likely.</p></li>
+</ol>
+<p>In that case, from the above figure of distributions, I might want to use the top Gamma distribution. The “technical details” of that specific Gamma distribution is that it uses a value of 1 for “shape” and 1 for “rate”, or <span class="math inline">\(Gamma(1,1)\)</span> (ignore what rate and shape are for now - they aren’t important at this stage).</p>
+<p>If I used this as my prior for <span class="math inline">\(\beta_0\)</span>, then my equation would be:</p>
+<p><span class="math display">\[
+y_i \sim Bernoulli(p_i) \\
+\]</span></p>
+<p><span class="math display">\[
+logit(p_i) = \beta_0
+\]</span></p>
+<p><span class="math display">\[
+\beta_0 \sim Gamma(1,1)
+\]</span></p>
+<p>Which is to say that my guess is that <span class="math inline">\(\beta_0\)</span> will be <em>probably</em> be somewhere in the distribution of values specified by <span class="math inline">\(Gamma(1,1)\)</span>.</p>
+<p>And that’s it. We have a Bayesian model, with a prior specified for the only parameter in the model, <span class="math inline">\(\beta_0\)</span>. As a consequence of adding that extra line, our entire philosophy has shifted as well.</p>
+<p>So the only real “Bayesian” thing we need to do when running Bayesian analysis is to specify a prior that captures our prior belief.</p>
+<p>The challenge, however, is that you will (very likely) only know a handful of distributions and won’t know their intricate details. That’s why I created another website called, creatively, <a href="https://deonroos.shinyapps.io/Distributions/">Distributions</a>. If you go to this website, you can easily switch between distributions and change the values until you get one that you feel captures your <strong>prior</strong> belief, without getting bogged down in details.</p>
+<blockquote class="blockquote">
+<p>As a slight tangent, you can think of frequentist statistics as using insanely vague guesses for priors. For instance, the above model would be (kind of) similar to:</p>
+<p><span class="math display">\[ y_i \sim Bernoulli(p_i) \]</span></p>
+<p><span class="math display">\[ logit(p_i) = \beta_0 \]</span></p>
+<p><span class="math display">\[ \beta_0 \sim Uniform(-\infty,\infty)\]</span></p>
+<p>Which is like saying, “the parameter <span class="math inline">\(\beta_0\)</span> is probably somewhere between negative infinity and positive infinity and I completely refuse to say anything else”.</p>
+</blockquote>
 
 
 </section>
