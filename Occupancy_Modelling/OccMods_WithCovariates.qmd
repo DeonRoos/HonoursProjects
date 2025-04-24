@@ -1,5 +1,5 @@
 ---
-title: "Including covariates in occupancy models"
+title: "Including Covariates in Occupancy Models"
 author: "Deon Roos"
 date: "`r Sys.Date()`"
 format:
@@ -467,5 +467,6 @@ X.0 <- cbind(
 #predict(fit, X.0)
 ```
 
-=======
->>>>>>> d2a8e3a44055a5e908f7e77ffad29b41db47483c
+# How should I store my data?
+
+In order to be able to run the model, we need the data to be in a particular order

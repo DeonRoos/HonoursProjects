@@ -1,5 +1,5 @@
 ---
-title: "Bayesian Models"
+title: "The Fundamentals of the Bayesian Framework"
 author: "Deon Roos"
 date: "`r Sys.Date()`"
 format:
