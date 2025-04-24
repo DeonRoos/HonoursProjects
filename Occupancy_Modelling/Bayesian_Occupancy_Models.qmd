@@ -259,7 +259,7 @@ So the only real "Bayesian" thing we need to do when running Bayesian analysis i
 
 The challenge, however, is that you will (very likely) only know a handful of distributions and won't know their intricate details. That's why I created another website called, creatively, [Distributions](https://deonroos.shinyapps.io/Distributions/). If you go to this website, you can easily switch between distributions and change the values until you get one that you feel captures your **prior** belief, without getting bogged down in details.
 
-> As a slight tangent, you can think of frequentist statistics as using insanely vague guesses for priors. For instance, the above model would be (kind of) similar to: 
+> As a slight tangent, you can think of frequentist statistics as being the equivalent to a Bayesian model except that they use the most impossibly, insanely vague guesses for priors. For instance, the above model would be (kind of) similar to: 
 >
 > $$ y_i \sim Bernoulli(p_i) $$
 >
