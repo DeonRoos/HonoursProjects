@@ -2,14 +2,15 @@ project:
   type: website
 
 website:
-  title: "Intro to Occupancy Modelling"
+  title: "Occupancy Modelling"
+  site-url: index.qmd
   navbar:
     left:
-      - text: "Intro to Occupancy Models"
+      - text: "Occupancy Models: The basics"
         href: Occupancy_Models.qmd
-      - text: "Occupancy Models with Covariates"
+      - text: "Occupancy Models: Covariates"
         href: OccMods_WithCovariates.qmd
-      - text: "Bayesian models"
+      - text: "Bayesian models: The concept"
         href: Bayesian_Occupancy_Models.qmd
 
 format:

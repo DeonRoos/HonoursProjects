@@ -1,5 +1,5 @@
 ---
-title: "Occupancy Models"
+title: "Introduction to Occupancy Models"
 author: "Deon Roos"
 date: "`r Sys.Date()`"
 format:
