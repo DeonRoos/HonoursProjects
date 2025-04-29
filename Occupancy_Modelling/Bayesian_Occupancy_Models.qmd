@@ -12,259 +12,162 @@ format:
     toc-location: right
 ---
 
-# Statistical frameworks
+In the previous page, we went through the underlying theory of Bayesian statistics; how our prior knowledge is updated using real data through Bayes’ Theorem. Now, we're going to move into the practical application of these ideas using the `spOccupancy` package. My goal here is to help you understand how Bayesian occupancy models are fit, how to monitor convergence, and how to interpret uncertainty through credible intervals.
 
-Most of the statistics you've probably learned so far has been based in what's called "frequentist" statistics. The analysis you'll be using for occupancy models (at least this particular implementation) will be using something called "Bayesian" statistics (pronounced "Bay-zee-'n"). These are the two main frameworks currently used to learn something from data (unless you want to start splitting philosophical hairs). Within this document we're going to start with what Bayesian statistics is, how to move from frequentist to Bayesian statistics, and how a Bayesian model works. We'll leave occupancy models to the side for the time being.
-
-# What is frequentist statistics?
-
-Almost every scientist understands statistics under the frequentist framework. That's not because it's philosophically better or has a cleaner underlying logic. It's because that's what they were taught. As simple as that. This has led to frequentist methods becoming the default; not because they’re necessarily better, but simply because that’s how people were taught.
-
-Frequentist statistics is based on the idea that there's one fixed, true value (like the average height of all people) that we're trying to estimate. We can't see that true value directly, but we can estimate it by using stats to analyse data we've collected. The more data we have, especially if we had an infinite amount, the better our estimate would be (i.e. the closer we'll get to the elusive "Truth"). Frequentist methods revolve around the idea of something called long-run frequencies: if we repeated an experiment over and over, how often would we get a result as "extreme" as the one we observed? It doesn’t assign probabilities to hypotheses or parameters, only to the data we might observe under certain assumptions.
-
-In contrast, Bayesian statistics treats unknown values (like parameters, e.g. the average human height) as something that is inherently uncertain (i.e. we won't ever be able to get to that "Truth"). Instead it allows us to assign probabilities to such values based on what we already believe (called a "prior"), then updates those beliefs with data. So where frequentists say, "this result would happen 5% of the time by chance," Bayesians say, "given the data, there’s an 80% chance this hypothesis is true."
-
-Think of it like this: a frequentist sees probability as something that only makes sense when talking about random events we could repeat (so called "long-run frequencies"), like flipping a coin or running an experiment thousands of times. So they’d never say, “there’s a 70% chance the average height is 1.75 m”, because the True average height is a fixed number, even if we don’t know it. Instead, they'd say, “if we did this study again and again, 95% of the time our results would fall within a range that contains the true value.” That's not particularly intuitive and is one of the big criticisms (at least mine) of frequentist statistics. So much of frequentist statistics is not intuitive.
-
-A Bayesian, on the other hand, is comfortable saying, “given what we knew before and what the data tells us now, there’s a 70% chance the average height is 1.75 m.” They treat unknowns, like the average human height, more like things we can be uncertain about and, instead of pretending that they know the absolute truth, they put probabilities on it. It's like the difference between saying, "How often would this result happen if we kept repeating the study?" versus, "Given everything we know, how confident are we in this being true?" This is one of the big benefits of Bayesian statistics. It's closer to how normal humans actually think (at least I think more like this).
-
-For example, if I asked you what you think your chances are of passing your thesis, you might be pessimistic and say something like 50%. That’s your **prior**; your belief about the outcome (here passing your thesis) before seeing any data. Now, what if I told you I’ve supervised 100 students before, and every single one of them passed? That’s strong evidence that the pass rate is high, close to 100%. This is your **data**, and the **likelihood** is how well that data fits different assumptions about the pass rate. With this new information, you’d probably update your belief and maybe revise your estimate up to, say, 80%. It’s still not 100% because you haven’t forgotten your initial uncertainty; you started out thinking there was only a 50% chance, so you’re cautious. But you're also not ignoring the fact that 100 students passed. Your new revised 80% chance of passing is your **posterior**. 
-
-That’s the Bayesian approach: start with a prior belief, then update it using data to get a posterior. Conversely, if we were frequentists, we wouldn’t talk about the probability that you will get a first. Instead, we’d ask something like: "If many students like you wrote their theses under similar conditions, how often would they pass?". In that case, a frequentist would ignore your belief and insist you have a 100%.
-
-# Bayes Theorem
-
-The equation you may well see whenever you look up Bayesian statistics is **Bayes' Theorem**, which is some version of:
-
-$$
-P(Parameters | Data) = \frac{P(Data | Parameters)\times P(Parameters)}{P(Data)}
-$$
-
-where:
-
-* $P(Parameters | Data)$ is the **posterior**. In the above thesis grade example, this is the 80% probability to pass, given you thought you had a 50% chance to pass but also that 100% students all passed. The "parameter" here is your estimated pass rate and the data comes from all the previous students.
-
-* $P(Parameters)$ is the **prior**. You're belief of what the parameter value is before seeing the data. In the thesis example, this is your belief that you have a 50% chance of passing.
-
-* $P(Data | Parameters)$ is the **likelihood**, which is a measure of how likely the data is, given the parameter values. In the above example, this crudely maps to 100% of students passing.
-
-* $P(Data)$ is the evidence; it's a "normalizing constant" that ensures everything sums to 1 (or 100%). It tells us how likely we are to observe the data, considering all possible parameter values. More technically, it's the probability of observing the data under any possible parameter value. Or, in the thesis example, it's the 100 students.
-
-# Visualising Bayes
-
-Let’s now add some visual intuition to the thesis pass example using simple figures. Imagine we want to visualise your belief as a curve that shows how likely you think different pass rates are.
-
-## Your Prior Belief (before seeing the data)
-
-You start off thinking you have a 50% chance of passing. That doesn’t mean you’re certain, it’s just your best guess. You might be unsure, so you're open to the idea that it could be lower or higher. Your **prior** might look like this:
-
-```{r, warning = FALSE, message = FALSE}
-library(ggplot2)
-library(dplyr)
-
-theta <- seq(0, 1, length.out = 1000)
-
-prior <- dbeta(theta, 20, 20)
-
-data.frame(theta, prior) |>
-  ggplot(aes(x = theta, y = prior)) +
-  geom_line(color = "steelblue", size = 1.2) +
-  scale_x_continuous(labels = scales::percent) +
-  labs(x = "Chance of Passing", y = "Belief Density") +
-  theme_minimal()
-```
-
-## The Data (100 students passed)
-
-Now you find out that 100 students have taken the thesis before you, and all of them passed. That’s really strong evidence that the pass rate is high, probably very near to 100%.
-
-We can visualise how likely the observed data is for different values of the pass rate, this is the **likelihood**.
+We'll again work with the Etosha elephant dataset. Importantly, we are not yet including spatial autocorrelation. We'll add that in the next section.
 
 ```{r}
-likelihood <- theta^100
-likelihood <- likelihood / max(likelihood)
-
-data.frame(theta, likelihood) |>
-  ggplot(aes(x = theta, y = likelihood)) +
-  geom_line(color = "darkgreen", size = 1.2) +
-  scale_x_continuous(labels = scales::percent) +
-  labs(x = "Chance of Passing", y = "Likelihood (scaled)") +
-  theme_minimal()
+library(spOccupancy)
 ```
 
-
-In Bayesian terms, this evidence updates your belief.
-
-## The Posterior (updated belief)
-
-Your updated belief, the **posterior**, combines your initial guess of roughly 50% with the strong evidence we have from 100 students. The resulting curve now shifts to the right — it’s taller near 85%–90% but still not at 100%, because you haven’t thrown out your original uncertainty.
-
-```{r}
-posterior <- dbeta(theta, 120, 20)
-
-posterior_df <- data.frame(
-  theta = rep(theta, 3),
-  density = c(prior, likelihood, posterior),
-  belief = rep(c("Prior", "Likelihood", "Posterior"), each = length(theta))
+```{r, include=FALSE}
+set.seed(1234)
+dat <- simOcc(J.x = 8, 
+              J.y = 8, 
+              n.rep = rep(3, times = 8 * 8), 
+              beta = c(1), 
+              alpha = c(-2, 0.5))
+obs <- dat$y
+det_cov <- dat$X.p[,,2]
+df <- data.frame(
+  survey = rep(1:3, each = 64),
+  cov = c(det_cov[,1], det_cov[,2], det_cov[,3]),
+  y = c(obs[,1], obs[,2], obs[,3])
 )
-
-posterior_df |>
-  ggplot(aes(x = theta, y = density, color = belief)) +
-  geom_line(size = 1.2) +
-  labs(x = "Chance of Passing", y = "Belief / Likelihood (scaled)", colour = "") +
-  scale_x_continuous(labels = scales::percent) +
-  theme_minimal() +
-  scale_color_manual(values = c("steelblue", "darkgreen", "firebrick"))
 ```
 
-Importantly, in Bayesian statistics, we don't have a single value for our parameter estimate (or **posterior**). Instead we have a full _distribution_ of values. This becomes an insanely valuable property that can be exploited in many different ways, which we'll get back to later on.
+# How do we estimate a posterior?
 
-For now, your posterior is more-or-less the multiplication of your prior belief with the likelihood ($P(Data | Parameters)\times P(Parameters)$). In this case, giving you a happy middle ground of ca. 85% chance to pass.
+In the previous page we spoke about posteriors and how these are a combination of our prior belief and our data. But how does that *actually* happen? Well, the answer is pretty simple but took hundreds of years for statisticians to figure out. Markov Chain Monte Carlo is an algorithm that was developed by scientists at Los Alamos in the 1950s working on the Manhattan Project (yes *that* Manhattan Project). The algorithm is called Markov Chain Monte Carlo (or MCMC) for two reasons. A Markov Chain describes a sequence of states, where the probability to move from one state to the next state depends only on what the current state is.
 
-This is how Bayesian statistics works in practice:
+For example, imagine you are walking through a series of rooms. Where you go next depends only on the room you're currently in. You can't instantly teleport to the other side of the building! Nor does it depend on the path you have taken to get to your current room.
 
-1. Start with a belief (or hypothesis).
+# What does MCMC look like?
 
-2. See some evidence (i.e. collect some data).
+Below is an animation of a simple MCMC algorithm to help give an intuition for what's happening behind the scenes.
 
-3. Update your belief accordingly.
+For this, we have the following simple linear model:
 
-In this case, seeing 100 successful students shifts your belief quite a lot, but not all the way to 100%, because your prior belief still matters! You know yourself after all! You'd be silly to just ignore that.
+$$y_i \sim Normal(\mu_i, \sigma^2)$$
 
-In short, this is kinda the scientific method, isn't it? (pls don't tell any frequentists that I said that...)
+$$\mu_i = \beta_0 + \beta_1 \times x_i $$
 
-# Bayesian models
+So our objective here is to figure out $\beta_0$ and $\beta_1$. To do so, we'll set up an MCMC using one "chain". A chain is a Markov Chain - it's the black dot and orange line you can see in the animation below. This chain is trying to find the "True value" location marked with a teal X. At each step the black dot asks "if I take a step in a random direction, will I be closer to X or further away?". If it's closer, then it takes the step. If it's further away, then it's *less* likely to take the step but it's not impossible. This seems like a bad choice. Why move somewhere if it's further away from X? The answer is a bit nuanced, but the concise explanation is that sometimes there might be areas of the "parameter space" (the parameter space is all possible values of $\beta_0$ and $\beta_1$) which "work" quite well despite not being the true value. If we didn't have the behaviour, where the chain might take a step even though it's worse, then we might get stuck in one of these "bad" areas (technically, these "bad" areas are called "local minima").
 
-The above example is cute and all but how does this translate into an actual model? For instance, what about the model we started off with in the very first document:
+Here's our MCMC in action:
 
-$$
-y_i \sim Bernoulli(p_i) \\
-$$
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(gganimate)
+library(ggthemes)
 
-$$
-logit(p_i) = \beta_0
-$$
+true_param <- c(2, -1)
+target_density <- function(x, y) {
+  exp(-0.5 * ((x - true_param[1])^2 / 1^2 + (y - true_param[2])^2 / 0.5^2))
+}
 
-How do we make this Bayesian?
+set.seed(123)
+n_iter <- 100
+x <- y <- 0
+samples <- tibble(x = x, y = y, iteration = 1)
 
-Well, with surprisingly little change. All we need to do is add a **prior** for each parameter in the model. Here, the only parameter we have is $\beta_0$. The challenge is; how do we _define_ our belief in numbers?
+for (i in 2:n_iter) {
+  x_prop <- rnorm(1, x, 0.4)
+  y_prop <- rnorm(1, y, 0.4)
+  accept_ratio <- target_density(x_prop, y_prop) / target_density(x, y)
+  
+  if (runif(1) < accept_ratio) {
+    x <- x_prop
+    y <- y_prop
+  }
+  samples <- samples |> add_row(x = x, y = y, iteration = i)
+}
 
-This is where statistical distributions become insanely useful. Distributions allow us to define a range of values at differing frequencies. For example, in the thesis example, when we specified the range of pass rates we thought might be reasonable:
-
-```{r}
-theta <- seq(0, 1, length.out = 1000)
-
-prior <- dbeta(theta, 20, 20)
-
-data.frame(theta, prior) |>
-  ggplot(aes(x = theta, y = prior)) +
-  geom_line(color = "steelblue", size = 1.2) +
-  scale_x_continuous(labels = scales::percent) +
-  labs(x = "Chance of Passing", y = "Belief Density") +
-  theme_minimal()
-```
-
-This was done using a distribution. Specifically, we used a $Beta$ distribution with the "technical details" set such that it looked like the above, but we can change the distribution and values to anything we want.
-
-So for our equation:
-
-$$
-y_i \sim Bernoulli(p_i) \\
-$$
-
-$$
-logit(p_i) = \beta_0
-$$
-
-We just need to specify what we think $\beta_0$ will be using a distribution, which could be whatever we think it could be. If we're not very confident, then we can make the distribution wider. If we think the minimum or maximum will be 0 or 1, then we can choose a distribution that will stay within those bounds.
-
-Here are a handful are randomly chosen distributions you could pick from to use as a prior for _anything_:
-
-```{r}
-library(dplyr)
-library(tidyr)
-
-x_beta <- seq(0, 1, length.out = 1000)
-x_normal <- seq(-5, 5, length.out = 1000)
-x_gamma <- seq(0, 10, length.out = 1000)
-
-normalize <- function(y) y / max(y)
-
-beta_df <- bind_rows(
-  tibble(x = x_beta, density = normalize(dbeta(x_beta, 2, 5)), Distribution = "Beta", Variant = "A"),
-  tibble(x = x_beta, density = normalize(dbeta(x_beta, 2, 2)), Distribution = "Beta", Variant = "B"),
-  tibble(x = x_beta, density = normalize(dbeta(x_beta, 5, 2)), Distribution = "Beta", Variant = "C")
-)
-
-normal_df <- bind_rows(
-  tibble(x = x_normal, density = normalize(dnorm(x_normal, -2, 1)), Distribution = "Normal", Variant = "A"),
-  tibble(x = x_normal, density = normalize(dnorm(x_normal, 0, 1)), Distribution = "Normal", Variant = "B"),
-  tibble(x = x_normal, density = normalize(dnorm(x_normal, 2, 1)), Distribution = "Normal", Variant = "C")
-)
-
-gamma_df <- bind_rows(
-  tibble(x = x_gamma, density = normalize(dgamma(x_gamma, shape = 1, rate = 1)), Distribution = "Gamma", Variant = "A"),
-  tibble(x = x_gamma, density = normalize(dgamma(x_gamma, shape = 2, rate = 1)), Distribution = "Gamma", Variant = "B"),
-  tibble(x = x_gamma, density = normalize(dgamma(x_gamma, shape = 5, rate = 1)), Distribution = "Gamma", Variant = "C")
-)
-
-df <- bind_rows(beta_df, normal_df, gamma_df)
-
-ggplot(df, aes(x = x, y = density)) +
-  geom_line(size = 1.1) +
-  facet_grid(cols = vars(Distribution), rows = vars(Variant), scales = "free_x") +
+ggplot(samples, aes(x = x, y = y)) +
+  geom_path(color = "#FF5733", linewidth = 0.7) +
+  geom_point(aes(x = x, y = y), color = "black", size = 2) +
+  geom_point(aes(x = true_param[1], y = true_param[2]), 
+             color = "#00A68A", size = 3, shape = 4, stroke = 2) +
+  annotate("text", x = true_param[1] + 0.1, y = true_param[2],
+           label = "True value", color = "#00A68A", hjust = 0) +
+  transition_reveal(iteration) +
+  coord_fixed() +
   labs(
-    x = expression("Possible values of " * beta[0]),
-    y = NULL
+    title = "MCMC Chain Step: {frame_along}",
+    x = bquote(beta[0]),
+    y = bquote(beta[1])
   ) +
-  theme_bw(base_size = 14) +
-  theme(
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    strip.text = element_text(size = 14)
-  )
+  theme_bw()
+```
 
+Here's where the really clever bit comes in. At each iteration, if we record the parameter value it tried, and store it, when we build it up the end result is our *posterior*! This is what made Bayesian statistics possible! We don't need to use any crazy (and often impossible) maths to figure out the posterior, we just have MCMC walk around and the end result is an insanely good reflection of the posterior!
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+
+samples_long <- samples |>
+  pivot_longer(cols = c(x, y), names_to = "parameter", values_to = "value")
+
+samples_long <- samples_long |>
+  mutate(true_value = if_else(parameter == "x", true_param[1], true_param[2]))
+
+samples_long_cumulative <- samples_long |>
+  group_by(parameter) |>
+  group_split() |>
+  map_dfr(function(df) {
+    param <- unique(df$parameter)
+    map_dfr(1:max(df$iteration), function(i) {
+      df |>
+        filter(iteration <= i) |>
+        mutate(frame = i, parameter = param)
+    })
+  })
+
+samples_long_cumulative <- samples_long_cumulative %>%
+  mutate(parameter_label = case_when(
+    parameter == "x" ~ "beta[0]",
+    parameter == "y" ~ "beta[1]"
+  ))
+
+ggplot(samples_long_cumulative, aes(x = value)) +
+  geom_histogram(binwidth = 0.4, fill = "#FF5733", color = "white", boundary = 0) +
+  geom_vline(aes(xintercept = true_value), linetype = "dashed", color = "#00A68A", linewidth = 1) +
+  facet_wrap(~parameter_label, scales = "free_x", ncol = 1, labeller = label_parsed) +
+  transition_manual(frame) +
+  labs(title = "Cumulative Posterior up to Iteration {current_frame}",
+       x = "Parameter Value", y = "Frequency") +
+  theme_bw()
+```
+
+Another way to show what the MCMC was up to is using something called "traceplots". These are relatively simple but actually quite powerful for determining if we *trust* the model output. We'll come back to this in a bit, but for now, we can show the MCMC exploring the parameter space using these traceplots.
+
+```{r, message = FALSE, warning = FALSE}
+samples_long_cumulative_trace <- samples_long |>
+  group_by(parameter) |>
+  group_split() |>
+  map_dfr(function(df) {
+    param <- unique(df$parameter)
+    map_dfr(1:max(df$iteration), function(i) {
+      df |>
+        filter(iteration <= i) |>
+        mutate(frame = i, parameter = param)
+    })
+  })
+
+samples_long_cumulative_trace <- samples_long_cumulative_trace %>%
+  mutate(parameter_label = case_when(
+    parameter == "x" ~ "beta[0]",
+    parameter == "y" ~ "beta[1]"
+  ))
+
+ggplot(samples_long_cumulative_trace, aes(x = iteration, y = value)) +
+  geom_line(color = "#FF5733", linewidth = 0.8) +
+  geom_hline(aes(yintercept = true_value), linetype = "dashed", color = "#00A68A", linewidth = 1) +
+  facet_wrap(~parameter_label, scales = "free_x", ncol = 1, labeller = label_parsed) +
+  transition_manual(frame) +
+  labs(title = "Traceplot up to Iteration {current_frame}",
+       x = "Iteration", y = "Parameter Value") +
+  theme_bw()
 
 ```
 
-Going back to our model, let's say I think the value for $\beta_0$ is likely:
-
-1. probably less than one
-
-2. can't go below zero
-
-3. a value close to zero is most likely. 
-
-In that case, from the above figure of distributions, I might want to use the top Gamma distribution. The "technical details" of that specific Gamma distribution is that it uses a value of 1 for "shape" and 1 for "rate", or $Gamma(1,1)$ (ignore what rate and shape are for now - they aren't important at this stage). 
-
-If I used this as my prior for $\beta_0$, then my equation would be:
-
-$$
-y_i \sim Bernoulli(p_i) \\
-$$
-
-$$
-logit(p_i) = \beta_0
-$$
-
-$$
-\beta_0 \sim Gamma(1,1)
-$$
-
-Which is to say that my guess is that $\beta_0$ will be _probably_ be somewhere in the distribution of values specified by $Gamma(1,1)$.
-
-And that's it. We have a Bayesian model, with a prior specified for the only parameter in the model, $\beta_0$. As a consequence of adding that extra line, our entire philosophy has shifted as well.
-
-So the only real "Bayesian" thing we need to do when running Bayesian analysis is to specify a prior that captures our prior belief.
-
-The challenge, however, is that you will (very likely) only know a handful of distributions and won't know their intricate details. That's why I created another website called, creatively, [Distributions](https://deonroos.shinyapps.io/Distributions/). If you go to this website, you can easily switch between distributions and change the values until you get one that you feel captures your **prior** belief, without getting bogged down in details.
-
-> As a slight tangent, you can think of frequentist statistics as being the equivalent to a Bayesian model except that they use the most impossibly, insanely vague guesses for priors. For instance, the above model would be (kind of) similar to: 
->
-> $$ y_i \sim Bernoulli(p_i) $$
->
-> $$ logit(p_i) = \beta_0 $$
->
-> $$ \beta_0 \sim Uniform(-\infty,\infty)$$
->
-> Which is like saying, "the parameter $\beta_0$ is probably somewhere between negative infinity and positive infinity and I completely refuse to say anything else".

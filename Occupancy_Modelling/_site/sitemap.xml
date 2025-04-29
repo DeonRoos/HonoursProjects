@@ -2,14 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>index.qmd/index.html</loc>
-    <lastmod>2025-04-24T10:51:40.563Z</lastmod>
+    <lastmod>2025-04-29T09:29:37.443Z</lastmod>
   </url>
   <url>
     <loc>index.qmd/Occupancy_Models.html</loc>
-    <lastmod>2025-04-24T10:50:26.931Z</lastmod>
+    <lastmod>2025-04-29T09:29:46.584Z</lastmod>
   </url>
   <url>
     <loc>index.qmd/OccMods_WithCovariates.html</loc>
-    <lastmod>2025-04-24T10:55:27.704Z</lastmod>
+    <lastmod>2025-04-29T09:30:01.787Z</lastmod>
+  </url>
+  <url>
+    <loc>index.qmd/Bayesian_Occupancy_Models.html</loc>
+    <lastmod>2025-04-29T10:52:39.099Z</lastmod>
+  </url>
+  <url>
+    <loc>index.qmd/Bayesian_Statistics.html</loc>
+    <lastmod>2025-04-29T09:32:45.849Z</lastmod>
   </url>
 </urlset>

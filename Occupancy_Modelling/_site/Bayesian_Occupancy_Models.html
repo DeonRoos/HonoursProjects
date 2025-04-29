@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Deon Roos">
-<meta name="dcterms.date" content="2025-04-24">
+<meta name="dcterms.date" content="2025-04-29">
 
-<title>Bayesian Models – Occupancy Modelling</title>
+<title>Occupancy Modelling - The Fundamentals of the Bayesian Framework</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -35,7 +35,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,13 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
+  "limit": 20,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -96,42 +90,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-submit-button-title": "Submit"
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -139,39 +104,39 @@ window.Quarto = {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Occupancy Modelling</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.qmd"> 
-<span class="menu-text">Intro to Occupancy Modelling</span></a>
+    <a class="nav-link" href="./Occupancy_Models.html" rel="" target="">
+ <span class="menu-text">Occupancy Models: The basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./Occupancy_Models.html"> 
-<span class="menu-text">Intro to Occupancy Models</span></a>
+    <a class="nav-link" href="./OccMods_WithCovariates.html" rel="" target="">
+ <span class="menu-text">Occupancy Models: Covariates</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./OccMods_WithCovariates.html"> 
-<span class="menu-text">Occupancy Models with Covariates</span></a>
+    <a class="nav-link" href="./Bayesian_Statistics.html" rel="" target="">
+ <span class="menu-text">Bayesian models: The concept</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./Bayesian_Occupancy_Models.html" aria-current="page"> 
-<span class="menu-text">Bayesian models</span></a>
+    <a class="nav-link active" href="./Bayesian_Occupancy_Models.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Fitting Bayesian models</span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools ms-auto">
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -184,16 +149,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#statistical-frameworks" id="toc-statistical-frameworks" class="nav-link active" data-scroll-target="#statistical-frameworks">Statistical frameworks</a></li>
-  <li><a href="#what-is-frequentist-statistics" id="toc-what-is-frequentist-statistics" class="nav-link" data-scroll-target="#what-is-frequentist-statistics">What is frequentist statistics?</a></li>
-  <li><a href="#bayes-theorem" id="toc-bayes-theorem" class="nav-link" data-scroll-target="#bayes-theorem">Bayes Theorem</a></li>
-  <li><a href="#visualising-bayes" id="toc-visualising-bayes" class="nav-link" data-scroll-target="#visualising-bayes">Visualising Bayes</a>
-  <ul class="collapse">
-  <li><a href="#your-prior-belief-before-seeing-the-data" id="toc-your-prior-belief-before-seeing-the-data" class="nav-link" data-scroll-target="#your-prior-belief-before-seeing-the-data">Your Prior Belief (before seeing the data)</a></li>
-  <li><a href="#the-data-100-students-passed" id="toc-the-data-100-students-passed" class="nav-link" data-scroll-target="#the-data-100-students-passed">The Data (100 students passed)</a></li>
-  <li><a href="#the-posterior-updated-belief" id="toc-the-posterior-updated-belief" class="nav-link" data-scroll-target="#the-posterior-updated-belief">The Posterior (updated belief)</a></li>
-  </ul></li>
-  <li><a href="#bayesian-models" id="toc-bayesian-models" class="nav-link" data-scroll-target="#bayesian-models">Bayesian models</a></li>
+  <li><a href="#how-do-we-estimate-a-posterior" id="toc-how-do-we-estimate-a-posterior" class="nav-link active" data-scroll-target="#how-do-we-estimate-a-posterior">How do we estimate a posterior?</a></li>
+  <li><a href="#what-does-mcmc-look-like" id="toc-what-does-mcmc-look-like" class="nav-link" data-scroll-target="#what-does-mcmc-look-like">What does MCMC look like?</a></li>
   </ul>
 </nav>
     </div>
@@ -202,7 +159,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Bayesian Models</h1>
+<h1 class="title">The Fundamentals of the Bayesian Framework</h1>
 </div>
 
 
@@ -219,7 +176,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 24, 2025</p>
+      <p class="date">April 29, 2025</p>
     </div>
   </div>
   
@@ -227,265 +184,156 @@ window.Quarto = {
   </div>
   
 
-
 </header>
 
-
-<section id="statistical-frameworks" class="level1">
-<h1>Statistical frameworks</h1>
-<p>Most of the statistics you’ve probably learned so far has been based in what’s called “frequentist” statistics. The analysis you’ll be using for occupancy models (at least this particular implementation) will be using something called “Bayesian” statistics (pronounced “Bay-zee-’n”). These are the two main frameworks currently used to learn something from data (unless you want to start splitting philosophical hairs). Within this document we’re going to start with what Bayesian statistics is, how to move from frequentist to Bayesian statistics, and how a Bayesian model works. We’ll leave occupancy models to the side for the time being.</p>
-</section>
-<section id="what-is-frequentist-statistics" class="level1">
-<h1>What is frequentist statistics?</h1>
-<p>Almost every scientist understands statistics under the frequentist framework. That’s not because it’s philosophically better or has a cleaner underlying logic. It’s because that’s what they were taught. As simple as that. This has led to frequentist methods becoming the default; not because they’re necessarily better, but simply because that’s how people were taught.</p>
-<p>Frequentist statistics is based on the idea that there’s one fixed, true value (like the average height of all people) that we’re trying to estimate. We can’t see that true value directly, but we can estimate it by using stats to analyse data we’ve collected. The more data we have, especially if we had an infinite amount, the better our estimate would be (i.e.&nbsp;the closer we’ll get to the elusive “Truth”). Frequentist methods revolve around the idea of something called long-run frequencies: if we repeated an experiment over and over, how often would we get a result as “extreme” as the one we observed? It doesn’t assign probabilities to hypotheses or parameters, only to the data we might observe under certain assumptions.</p>
-<p>In contrast, Bayesian statistics treats unknown values (like parameters, e.g.&nbsp;the average human height) as something that is inherently uncertain (i.e.&nbsp;we won’t ever be able to get to that “Truth”). Instead it allows us to assign probabilities to such values based on what we already believe (called a “prior”), then updates those beliefs with data. So where frequentists say, “this result would happen 5% of the time by chance,” Bayesians say, “given the data, there’s an 80% chance this hypothesis is true.”</p>
-<p>Think of it like this: a frequentist sees probability as something that only makes sense when talking about random events we could repeat (so called “long-run frequencies”), like flipping a coin or running an experiment thousands of times. So they’d never say, “there’s a 70% chance the average height is 1.75 m”, because the True average height is a fixed number, even if we don’t know it. Instead, they’d say, “if we did this study again and again, 95% of the time our results would fall within a range that contains the true value.” That’s not particularly intuitive and is one of the big criticisms (at least mine) of frequentist statistics. So much of frequentist statistics is not intuitive.</p>
-<p>A Bayesian, on the other hand, is comfortable saying, “given what we knew before and what the data tells us now, there’s a 70% chance the average height is 1.75 m.” They treat unknowns, like the average human height, more like things we can be uncertain about and, instead of pretending that they know the absolute truth, they put probabilities on it. It’s like the difference between saying, “How often would this result happen if we kept repeating the study?” versus, “Given everything we know, how confident are we in this being true?” This is one of the big benefits of Bayesian statistics. It’s closer to how normal humans actually think (at least I think more like this).</p>
-<p>For example, if I asked you what you think your chances are of passing your thesis, you might be pessimistic and say something like 50%. That’s your <strong>prior</strong>; your belief about the outcome (here passing your thesis) before seeing any data. Now, what if I told you I’ve supervised 100 students before, and every single one of them passed? That’s strong evidence that the pass rate is high, close to 100%. This is your <strong>data</strong>, and the <strong>likelihood</strong> is how well that data fits different assumptions about the pass rate. With this new information, you’d probably update your belief and maybe revise your estimate up to, say, 80%. It’s still not 100% because you haven’t forgotten your initial uncertainty; you started out thinking there was only a 50% chance, so you’re cautious. But you’re also not ignoring the fact that 100 students passed. Your new revised 80% chance of passing is your <strong>posterior</strong>.</p>
-<p>That’s the Bayesian approach: start with a prior belief, then update it using data to get a posterior. Conversely, if we were frequentists, we wouldn’t talk about the probability that you will get a first. Instead, we’d ask something like: “If many students like you wrote their theses under similar conditions, how often would they pass?”. In that case, a frequentist would ignore your belief and insist you have a 100%.</p>
-</section>
-<section id="bayes-theorem" class="level1">
-<h1>Bayes Theorem</h1>
-<p>The equation you may well see whenever you look up Bayesian statistics is <strong>Bayes’ Theorem</strong>, which is some version of:</p>
-<p><span class="math display">\[
-P(Parameters | Data) = \frac{P(Data | Parameters)\times P(Parameters)}{P(Data)}
-\]</span></p>
-<p>where:</p>
-<ul>
-<li><p><span class="math inline">\(P(Parameters | Data)\)</span> is the <strong>posterior</strong>. In the above thesis grade example, this is the 80% probability to pass, given you thought you had a 50% chance to pass but also that 100% students all passed. The “parameter” here is your estimated pass rate and the data comes from all the previous students.</p></li>
-<li><p><span class="math inline">\(P(Parameters)\)</span> is the <strong>prior</strong>. You’re belief of what the parameter value is before seeing the data. In the thesis example, this is your belief that you have a 50% chance of passing.</p></li>
-<li><p><span class="math inline">\(P(Data | Parameters)\)</span> is the <strong>likelihood</strong>, which is a measure of how likely the data is, given the parameter values. In the above example, this crudely maps to 100% of students passing.</p></li>
-<li><p><span class="math inline">\(P(Data)\)</span> is the evidence; it’s a “normalizing constant” that ensures everything sums to 1 (or 100%). It tells us how likely we are to observe the data, considering all possible parameter values. More technically, it’s the probability of observing the data under any possible parameter value. Or, in the thesis example, it’s the 100 students.</p></li>
-</ul>
-</section>
-<section id="visualising-bayes" class="level1">
-<h1>Visualising Bayes</h1>
-<p>Let’s now add some visual intuition to the thesis pass example using simple figures. Imagine we want to visualise your belief as a curve that shows how likely you think different pass rates are.</p>
-<section id="your-prior-belief-before-seeing-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="your-prior-belief-before-seeing-the-data">Your Prior Belief (before seeing the data)</h2>
-<p>You start off thinking you have a 50% chance of passing. That doesn’t mean you’re certain, it’s just your best guess. You might be unsure, so you’re open to the idea that it could be lower or higher. Your <strong>prior</strong> might look like this:</p>
+<p>In the previous page, we went through the underlying theory of Bayesian statistics; how our prior knowledge is updated using real data through Bayes’ Theorem. Now, we’re going to move into the practical application of these ideas using the <code>spOccupancy</code> package. My goal here is to help you understand how Bayesian occupancy models are fit, how to monitor convergence, and how to interpret uncertainty through credible intervals.</p>
+<p>We’ll again work with the Etosha elephant dataset. Importantly, we are not yet including spatial autocorrelation. We’ll add that in the next section.</p>
 <div class="cell">
-<details class="code-fold">
+<details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>prior <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">20</span>, <span class="dv">20</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(theta, prior) <span class="sc">|&gt;</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> prior)) <span class="sc">+</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Belief Density"</span>) <span class="sc">+</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spOccupancy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="how-do-we-estimate-a-posterior" class="level1">
+<h1>How do we estimate a posterior?</h1>
+<p>In the previous page we spoke about posteriors and how these are a combination of our prior belief and our data. But how does that <em>actually</em> happen? Well, the answer is pretty simple but took hundreds of years for statisticians to figure out. Markov Chain Monte Carlo is an algorithm that was developed by scientists at Los Alamos in the 1950s working on the Manhattan Project (yes <em>that</em> Manhattan Project). The algorithm is called Markov Chain Monte Carlo (or MCMC) for two reasons. A Markov Chain describes a sequence of states, where the probability to move from one state to the next state depends only on what the current state is.</p>
+<p>For example, imagine you are walking through a series of rooms. Where you go next depends only on the room you’re currently in. You can’t instantly teleport to the other side of the building! Nor does it depend on the path you have taken to get to your current room.</p>
+</section>
+<section id="what-does-mcmc-look-like" class="level1">
+<h1>What does MCMC look like?</h1>
+<p>Below is an animation of a simple MCMC algorithm to help give an intuition for what’s happening behind the scenes.</p>
+<p>For this, we have the following simple linear model:</p>
+<p><span class="math display">\[y_i \sim Normal(\mu_i, \sigma^2)\]</span></p>
+<p><span class="math display">\[\mu_i = \beta_0 + \beta_1 \times x_i \]</span></p>
+<p>So our objective here is to figure out <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>. To do so, we’ll set up an MCMC using one “chain”. A chain is a Markov Chain - it’s the black dot and orange line you can see in the animation below. This chain is trying to find the “True value” location marked with a teal X. At each step the black dot asks “if I take a step in a random direction, will I be closer to X or further away?”. If it’s closer, then it takes the step. If it’s further away, then it’s <em>less</em> likely to take the step but it’s not impossible. This seems like a bad choice. Why move somewhere if it’s further away from X? The answer is a bit nuanced, but the concise explanation is that sometimes there might be areas of the “parameter space” (the parameter space is all possible values of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>) which “work” quite well despite not being the true value. If we didn’t have the behaviour, where the chain might take a step even though it’s worse, then we might get stuck in one of these “bad” areas (technically, these “bad” areas are called “local minima”).</p>
+<p>Here’s our MCMC in action:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>true_param <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>target_density <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>(<span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> ((x <span class="sc">-</span> true_param[<span class="dv">1</span>])<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="dv">1</span><span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (y <span class="sc">-</span> true_param[<span class="dv">2</span>])<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fl">0.5</span><span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>n_iter <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> y <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">iteration =</span> <span class="dv">1</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  x_prop <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, x, <span class="fl">0.4</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  y_prop <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, y, <span class="fl">0.4</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  accept_ratio <span class="ot">&lt;-</span> <span class="fu">target_density</span>(x_prop, y_prop) <span class="sc">/</span> <span class="fu">target_density</span>(x, y)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&lt;</span> accept_ratio) {</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> x_prop</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> y_prop</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  samples <span class="ot">&lt;-</span> samples <span class="sc">|&gt;</span> <span class="fu">add_row</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">iteration =</span> i)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(samples, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">color =</span> <span class="st">"#FF5733"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> true_param[<span class="dv">1</span>], <span class="at">y =</span> true_param[<span class="dv">2</span>]), </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"#00A68A"</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">stroke =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> true_param[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">0.1</span>, <span class="at">y =</span> true_param[<span class="dv">2</span>],</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"True value"</span>, <span class="at">color =</span> <span class="st">"#00A68A"</span>, <span class="at">hjust =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_reveal</span>(iteration) <span class="sc">+</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"MCMC Chain Step: {frame_along}"</span>,</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">bquote</span>(beta[<span class="dv">0</span>]),</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">bquote</span>(beta[<span class="dv">1</span>])</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-3-1.gif" class="img-fluid"></p>
 </div>
 </div>
-</div>
-</section>
-<section id="the-data-100-students-passed" class="level2">
-<h2 class="anchored" data-anchor-id="the-data-100-students-passed">The Data (100 students passed)</h2>
-<p>Now you find out that 100 students have taken the thesis before you, and all of them passed. That’s really strong evidence that the pass rate is high, probably very near to 100%.</p>
-<p>We can visualise how likely the observed data is for different values of the pass rate, this is the <strong>likelihood</strong>.</p>
+<p>Here’s where the really clever bit comes in. At each iteration, if we record the parameter value it tried, and store it, when we build it up the end result is our <em>posterior</em>! This is what made Bayesian statistics possible! We don’t need to use any crazy (and often impossible) maths to figure out the posterior, we just have MCMC walk around and the end result is an insanely good reflection of the posterior!</p>
 <div class="cell">
-<details class="code-fold">
+<details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> theta<span class="sc">^</span><span class="dv">100</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> likelihood <span class="sc">/</span> <span class="fu">max</span>(likelihood)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(theta, likelihood) <span class="sc">|&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> likelihood)) <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Likelihood (scaled)"</span>) <span class="sc">+</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>In Bayesian terms, this evidence updates your belief.</p>
-</section>
-<section id="the-posterior-updated-belief" class="level2">
-<h2 class="anchored" data-anchor-id="the-posterior-updated-belief">The Posterior (updated belief)</h2>
-<p>Your updated belief, the <strong>posterior</strong>, combines your initial guess of roughly 50% with the strong evidence we have from 100 students. The resulting curve now shifts to the right — it’s taller near 85%–90% but still not at 100%, because you haven’t thrown out your original uncertainty.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>posterior <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">120</span>, <span class="dv">20</span>)</span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>posterior_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">theta =</span> <span class="fu">rep</span>(theta, <span class="dv">3</span>),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">density =</span> <span class="fu">c</span>(prior, likelihood, posterior),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">belief =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Prior"</span>, <span class="st">"Likelihood"</span>, <span class="st">"Posterior"</span>), <span class="at">each =</span> <span class="fu">length</span>(theta))</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>samples_long <span class="ot">&lt;-</span> samples <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(x, y), <span class="at">names_to =</span> <span class="st">"parameter"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>samples_long <span class="ot">&lt;-</span> samples_long <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">true_value =</span> <span class="fu">if_else</span>(parameter <span class="sc">==</span> <span class="st">"x"</span>, true_param[<span class="dv">1</span>], true_param[<span class="dv">2</span>]))</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>posterior_df <span class="sc">|&gt;</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> density, <span class="at">color =</span> belief)) <span class="sc">+</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Belief / Likelihood (scaled)"</span>, <span class="at">colour =</span> <span class="st">""</span>) <span class="sc">+</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"steelblue"</span>, <span class="st">"darkgreen"</span>, <span class="st">"firebrick"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>samples_long_cumulative <span class="ot">&lt;-</span> samples_long <span class="sc">|&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(parameter) <span class="sc">|&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="cf">function</span>(df) {</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    param <span class="ot">&lt;-</span> <span class="fu">unique</span>(df<span class="sc">$</span>parameter)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map_dfr</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">max</span>(df<span class="sc">$</span>iteration), <span class="cf">function</span>(i) {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      df <span class="sc">|&gt;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(iteration <span class="sc">&lt;=</span> i) <span class="sc">|&gt;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">frame =</span> i, <span class="at">parameter =</span> param)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>samples_long_cumulative <span class="ot">&lt;-</span> samples_long_cumulative <span class="sc">%&gt;%</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">parameter_label =</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    parameter <span class="sc">==</span> <span class="st">"x"</span> <span class="sc">~</span> <span class="st">"beta[0]"</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    parameter <span class="sc">==</span> <span class="st">"y"</span> <span class="sc">~</span> <span class="st">"beta[1]"</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(samples_long_cumulative, <span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.4</span>, <span class="at">fill =</span> <span class="st">"#FF5733"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">boundary =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> true_value), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#00A68A"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>parameter_label, <span class="at">scales =</span> <span class="st">"free_x"</span>, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">labeller =</span> label_parsed) <span class="sc">+</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_manual</span>(frame) <span class="sc">+</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cumulative Posterior up to Iteration {current_frame}"</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Parameter Value"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-4-1.gif" class="img-fluid"></p>
 </div>
 </div>
-</div>
-<p>Importantly, in Bayesian statistics, we don’t have a single value for our parameter estimate (or <strong>posterior</strong>). Instead we have a full <em>distribution</em> of values. This becomes an insanely valuable property that can be exploited in many different ways, which we’ll get back to later on.</p>
-<p>For now, your posterior is more-or-less the multiplication of your prior belief with the likelihood (<span class="math inline">\(P(Data | Parameters)\times P(Parameters)\)</span>). In this case, giving you a happy middle ground of ca. 85% chance to pass.</p>
-<p>This is how Bayesian statistics works in practice:</p>
-<ol type="1">
-<li><p>Start with a belief (or hypothesis).</p></li>
-<li><p>See some evidence (i.e.&nbsp;collect some data).</p></li>
-<li><p>Update your belief accordingly.</p></li>
-</ol>
-<p>In this case, seeing 100 successful students shifts your belief quite a lot, but not all the way to 100%, because your prior belief still matters! You know yourself after all! You’d be silly to just ignore that.</p>
-<p>In short, this is kinda the scientific method, isn’t it? (pls don’t tell any frequentists that I said that…)</p>
-</section>
-</section>
-<section id="bayesian-models" class="level1">
-<h1>Bayesian models</h1>
-<p>The above example is cute and all but how does this translate into an actual model? For instance, what about the model we started off with in the very first document:</p>
-<p><span class="math display">\[
-y_i \sim Bernoulli(p_i) \\
-\]</span></p>
-<p><span class="math display">\[
-logit(p_i) = \beta_0
-\]</span></p>
-<p>How do we make this Bayesian?</p>
-<p>Well, with surprisingly little change. All we need to do is add a <strong>prior</strong> for each parameter in the model. Here, the only parameter we have is <span class="math inline">\(\beta_0\)</span>. The challenge is; how do we <em>define</em> our belief in numbers?</p>
-<p>This is where statistical distributions become insanely useful. Distributions allow us to define a range of values at differing frequencies. For example, in the thesis example, when we specified the range of pass rates we thought might be reasonable:</p>
+<p>Another way to show what the MCMC was up to is using something called “traceplots”. These are relatively simple but actually quite powerful for determining if we <em>trust</em> the model output. We’ll come back to this in a bit, but for now, we can show the MCMC exploring the parameter space using these traceplots.</p>
 <div class="cell">
-<details class="code-fold">
+<details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prior <span class="ot">&lt;-</span> <span class="fu">dbeta</span>(theta, <span class="dv">20</span>, <span class="dv">20</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(theta, prior) <span class="sc">|&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> theta, <span class="at">y =</span> prior)) <span class="sc">+</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Chance of Passing"</span>, <span class="at">y =</span> <span class="st">"Belief Density"</span>) <span class="sc">+</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>samples_long_cumulative_trace <span class="ot">&lt;-</span> samples_long <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(parameter) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>() <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="cf">function</span>(df) {</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    param <span class="ot">&lt;-</span> <span class="fu">unique</span>(df<span class="sc">$</span>parameter)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map_dfr</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">max</span>(df<span class="sc">$</span>iteration), <span class="cf">function</span>(i) {</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      df <span class="sc">|&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(iteration <span class="sc">&lt;=</span> i) <span class="sc">|&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">frame =</span> i, <span class="at">parameter =</span> param)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>samples_long_cumulative_trace <span class="ot">&lt;-</span> samples_long_cumulative_trace <span class="sc">%&gt;%</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">parameter_label =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    parameter <span class="sc">==</span> <span class="st">"x"</span> <span class="sc">~</span> <span class="st">"beta[0]"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    parameter <span class="sc">==</span> <span class="st">"y"</span> <span class="sc">~</span> <span class="st">"beta[1]"</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(samples_long_cumulative_trace, <span class="fu">aes</span>(<span class="at">x =</span> iteration, <span class="at">y =</span> value)) <span class="sc">+</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#FF5733"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> true_value), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#00A68A"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>parameter_label, <span class="at">scales =</span> <span class="st">"free_x"</span>, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">labeller =</span> label_parsed) <span class="sc">+</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_manual</span>(frame) <span class="sc">+</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Traceplot up to Iteration {current_frame}"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Iteration"</span>, <span class="at">y =</span> <span class="st">"Parameter Value"</span>) <span class="sc">+</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-5-1.gif" class="img-fluid"></p>
 </div>
 </div>
-</div>
-<p>This was done using a distribution. Specifically, we used a <span class="math inline">\(Beta\)</span> distribution with the “technical details” set such that it looked like the above, but we can change the distribution and values to anything we want.</p>
-<p>So for our equation:</p>
-<p><span class="math display">\[
-y_i \sim Bernoulli(p_i) \\
-\]</span></p>
-<p><span class="math display">\[
-logit(p_i) = \beta_0
-\]</span></p>
-<p>We just need to specify what we think <span class="math inline">\(\beta_0\)</span> will be using a distribution, which could be whatever we think it could be. If we’re not very confident, then we can make the distribution wider. If we think the minimum or maximum will be 0 or 1, then we can choose a distribution that will stay within those bounds.</p>
-<p>Here are a handful are randomly chosen distributions you could pick from to use as a prior for <em>anything</em>:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>x_beta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>x_normal <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>x_gamma <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>normalize <span class="ot">&lt;-</span> <span class="cf">function</span>(y) y <span class="sc">/</span> <span class="fu">max</span>(y)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>beta_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_beta, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dbeta</span>(x_beta, <span class="dv">2</span>, <span class="dv">5</span>)), <span class="at">Distribution =</span> <span class="st">"Beta"</span>, <span class="at">Variant =</span> <span class="st">"A"</span>),</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_beta, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dbeta</span>(x_beta, <span class="dv">2</span>, <span class="dv">2</span>)), <span class="at">Distribution =</span> <span class="st">"Beta"</span>, <span class="at">Variant =</span> <span class="st">"B"</span>),</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_beta, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dbeta</span>(x_beta, <span class="dv">5</span>, <span class="dv">2</span>)), <span class="at">Distribution =</span> <span class="st">"Beta"</span>, <span class="at">Variant =</span> <span class="st">"C"</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>normal_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_normal, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dnorm</span>(x_normal, <span class="sc">-</span><span class="dv">2</span>, <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Normal"</span>, <span class="at">Variant =</span> <span class="st">"A"</span>),</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_normal, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dnorm</span>(x_normal, <span class="dv">0</span>, <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Normal"</span>, <span class="at">Variant =</span> <span class="st">"B"</span>),</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_normal, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dnorm</span>(x_normal, <span class="dv">2</span>, <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Normal"</span>, <span class="at">Variant =</span> <span class="st">"C"</span>)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>gamma_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_gamma, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dgamma</span>(x_gamma, <span class="at">shape =</span> <span class="dv">1</span>, <span class="at">rate =</span> <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Gamma"</span>, <span class="at">Variant =</span> <span class="st">"A"</span>),</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_gamma, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dgamma</span>(x_gamma, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">rate =</span> <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Gamma"</span>, <span class="at">Variant =</span> <span class="st">"B"</span>),</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">x =</span> x_gamma, <span class="at">density =</span> <span class="fu">normalize</span>(<span class="fu">dgamma</span>(x_gamma, <span class="at">shape =</span> <span class="dv">5</span>, <span class="at">rate =</span> <span class="dv">1</span>)), <span class="at">Distribution =</span> <span class="st">"Gamma"</span>, <span class="at">Variant =</span> <span class="st">"C"</span>)</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(beta_df, normal_df, gamma_df)</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> density)) <span class="sc">+</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(Distribution), <span class="at">rows =</span> <span class="fu">vars</span>(Variant), <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(<span class="st">"Possible values of "</span> <span class="sc">*</span> beta[<span class="dv">0</span>]),</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="cn">NULL</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Bayesian_Occupancy_Models_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Going back to our model, let’s say I think the value for <span class="math inline">\(\beta_0\)</span> is likely:</p>
-<ol type="1">
-<li><p>probably less than one</p></li>
-<li><p>can’t go below zero</p></li>
-<li><p>a value close to zero is most likely.</p></li>
-</ol>
-<p>In that case, from the above figure of distributions, I might want to use the top Gamma distribution. The “technical details” of that specific Gamma distribution is that it uses a value of 1 for “shape” and 1 for “rate”, or <span class="math inline">\(Gamma(1,1)\)</span> (ignore what rate and shape are for now - they aren’t important at this stage).</p>
-<p>If I used this as my prior for <span class="math inline">\(\beta_0\)</span>, then my equation would be:</p>
-<p><span class="math display">\[
-y_i \sim Bernoulli(p_i) \\
-\]</span></p>
-<p><span class="math display">\[
-logit(p_i) = \beta_0
-\]</span></p>
-<p><span class="math display">\[
-\beta_0 \sim Gamma(1,1)
-\]</span></p>
-<p>Which is to say that my guess is that <span class="math inline">\(\beta_0\)</span> will be <em>probably</em> be somewhere in the distribution of values specified by <span class="math inline">\(Gamma(1,1)\)</span>.</p>
-<p>And that’s it. We have a Bayesian model, with a prior specified for the only parameter in the model, <span class="math inline">\(\beta_0\)</span>. As a consequence of adding that extra line, our entire philosophy has shifted as well.</p>
-<p>So the only real “Bayesian” thing we need to do when running Bayesian analysis is to specify a prior that captures our prior belief.</p>
-<p>The challenge, however, is that you will (very likely) only know a handful of distributions and won’t know their intricate details. That’s why I created another website called, creatively, <a href="https://deonroos.shinyapps.io/Distributions/">Distributions</a>. If you go to this website, you can easily switch between distributions and change the values until you get one that you feel captures your <strong>prior</strong> belief, without getting bogged down in details.</p>
-<blockquote class="blockquote">
-<p>As a slight tangent, you can think of frequentist statistics as using insanely vague guesses for priors. For instance, the above model would be (kind of) similar to:</p>
-<p><span class="math display">\[ y_i \sim Bernoulli(p_i) \]</span></p>
-<p><span class="math display">\[ logit(p_i) = \beta_0 \]</span></p>
-<p><span class="math display">\[ \beta_0 \sim Uniform(-\infty,\infty)\]</span></p>
-<p>Which is like saying, “the parameter <span class="math inline">\(\beta_0\)</span> is probably somewhere between negative infinity and positive infinity and I completely refuse to say anything else”.</p>
-</blockquote>
 
 
 </section>
@@ -526,7 +374,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -558,50 +417,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -611,17 +431,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -633,130 +444,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
+      return note.innerHTML;
     });
   }
       let selectedAnnoteEl;
@@ -800,7 +488,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -826,32 +513,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -912,7 +573,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-
 
 
 
